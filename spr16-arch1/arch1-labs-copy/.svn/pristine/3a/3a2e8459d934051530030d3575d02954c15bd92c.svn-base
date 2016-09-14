@@ -1,0 +1,60 @@
+#include <msp430.h>
+
+#include "stateMachines.h"
+
+// for button state machine
+#define BUTTON_DOWN 1
+#define BUTTON_UP 0
+static unsigned char button_state = BUTTON_UP;
+
+
+// for flashRED state machine
+static unsigned char red_state = 0; /* boolean: true = led on */
+static unsigned char red_counter = 0;
+
+/* called on timer interrupt */
+void flashRED()		      /* implements the flashRED state machine */
+{
+  unsigned char counterLimit = 100; /* note: not a static variable! */
+  if (button_state == BUTTON_DOWN) /* blink faster if pressed! */
+    counterLimit = 50;
+    
+  if (red_counter++ >= counterLimit) { /* delayed long enough? */
+    red_state = !red_state;	/* change state */
+    red_counter = 0;               /* reset counter */
+  }
+}
+
+
+/* handler for button interrupt */
+void btn_interrupt_handler()	/* implements the button state machine */
+{
+  if (button_state == BUTTON_DOWN) {
+    button_state = BUTTON_UP;
+    P1IES |= BIT3;		/* interrupt sensitive to button down */
+  } else {			/* button UP */
+    button_state = BUTTON_DOWN;
+    P1IES &= ~BIT3;		/* interrupt sensitive to button up */
+  }
+  P1IFG &= ~BIT3;		/* clear interrupt */
+}
+
+/* called on button interrupt */
+void led_control()		/* not a state machine:
+				   set LEDs from state variables */
+{
+  char ledFlags = 0;		/* default: both LEDs off */
+  if (button_state == BUTTON_DOWN)
+    ledFlags = BIT6;		/* green on if button down */
+  if (red_state)
+    ledFlags |= BIT0;
+  P1OUT &= (0xff-(BIT6+BIT0)) | ledFlags; // clear bit for off leds
+  P1OUT |= ledFlags;			  // set bit for on leds
+}
+
+
+void timer_interrupt_handler()
+{
+  flashRED();
+  led_control();
+}

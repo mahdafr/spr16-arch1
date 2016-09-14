@@ -1,0 +1,186 @@
+//last modified 05.17 t
+#include <msp430g2553.h>
+#include "lcd_utils.h"
+#include "draw_pipe.h"
+#include "buttons.h"
+#define P1SwMask SW1
+#define P2SwMask (UpSw + DownSw + LeftSw + RightSw)
+unsigned char oldP1SwVal, oldP2SwVal;
+u_char score = 0;
+
+static u_char pipePos, pipeGapTop;
+
+/* global vars */
+short birdXPos = 1;
+short birdYPos = 1;
+short birdXVel = 10;
+short birdYVel = 10;
+int timerCount = 1;  
+
+/* setup switch interrupts */
+void initializeSwitchInterrupts() {
+  P1REN |= P1SwMask;		/* resistors for switches */
+  P2REN |= P2SwMask;
+  P1OUT |= P1SwMask;		/* pull-ups for switches */
+  P2OUT |= P2SwMask;
+  oldP1SwVal = P1IN & P1SwMask;	/* remember current switch vales */
+  oldP2SwVal = P2IN & P2SwMask;
+  P1IES = oldP1SwVal;		/* interrupt when switch bits change */
+  P2IES = oldP2SwVal;
+  P1IE = P1SwMask;		/* enable interrupts from switches */
+  P2IE = P2SwMask;
+}
+
+/* global vars */
+u_char pipeVel = 4;
+u_char playGame = 0;
+u_char firstPipe = MAX_X;
+u_char gapTop = 35;
+
+void resetGameState(void);	/* forward definition */
+void updateShape();
+void updateBird();
+void birdDied(void);
+
+void main(void) {  
+  WDTCTL = WDTPW + WDTHOLD;     // Stop watchdog timer
+  lcdinit();                    // init LCD (also: CPU clock to 16MHz)
+  lcd_setAddr(0,3);
+  //CCTL0 = CCIE;                 // CCR0 interrupt enabled
+  CCTL0 = CCIE | 0;
+  TACTL = TASSEL_2 + MC_1 + ID_3; // Set timer clock to CPU clock/8
+  //CCR0 = 5000;			// Interrupt every 10 ms
+  CCR0 = 50000;
+  initializeSwitchInterrupts();
+  resetGameState();
+  or_sr(0x18);			// CPU off, GIE on
+}  
+
+/* Switches on P1 (far right switch) */
+interrupt(PORT1_VECTOR) Port_1(void) {
+  unsigned char p1Val = P1IN & P1SwMask; /* read switches from p1 */
+  P1IES= p1Val;			/* interrupt on value change */
+  P1IFG = 0;			/* clear pending P1 interrupts  */
+  playGame = 1;
+
+  // reset everyting on press of SW1 (on right)
+  if (!(p1Val & SW1) && (oldP1SwVal & SW1)) /* transition from unpressed to pressed? */
+    resetGameState();			   /* re-initialize paddle */
+  oldP1SwVal = p1Val;
+}
+
+/* Switches on P2 (direction pad) */
+interrupt(PORT2_VECTOR) Port_2(void) {
+  unsigned char p2Val = P2IN & P2SwMask; /* read switches from p2 */
+  P2IES= p2Val;			/* interrupt on value change */
+  P2IFG = 0;			/* clear pending P2 interrupts  */
+  /* just remember button state */
+  oldP2SwVal = p2Val;
+  /* toggle the timer interrupt when the button is pressed */
+  CCTL0 = 0 | CCIE;
+  //timerCount = 1;
+  //updateBird();
+  playGame = 1;
+}
+
+void updateShape(void) {	/* called by timer interrupt handler */
+  if ( playGame ) {
+    //"move" game faster as score increases
+    if ( score%10==9 )
+      pipeVel += 2;
+    //"move" pipes left
+    firstPipe -= pipeVel;
+    if ( firstPipe<=15 )
+      firstPipe = MAX_X/2;
+    //increment score if bird passes through pipe
+    if ( birdXPos==firstPipe ) {
+      if ( birdYPos>=gapTop && birdYPos<=gapTop+20 )
+	score++;
+      else
+        birdDied();
+    }
+    gapTop = updatePipe(firstPipe,score);
+  } else
+    resetGameState();
+}
+
+void updateBird(void){
+  int pixelStep = 3;//1;
+  // check if up switch is pressed
+  if (!(oldP2SwVal & UpSw))  {
+    if (birdYPos >= 5) {//8
+      birdYPos -= pixelStep; //2
+    }
+  }
+  
+  // check if down switch is pressed
+  if (!(oldP2SwVal & DownSw))  {
+    if (birdYPos < 63) { //56+7=61
+      birdYPos += pixelStep;
+    }
+  }
+  /*
+  // check if left switch is pressed - left
+  if (!(oldP2SwVal & LeftSw))  {
+    if (birdXPos > 2) {
+      birdXPos -= pixelStep;
+    }
+  }   
+  *//*             
+  // check if right  switch is pressed
+  if (!(oldP2SwVal & RightSw))  {
+    if (birdXPos < 89) { //94-5=89
+      birdXPos += pixelStep; //used to be 4
+    }
+  }
+  */
+  if ( birdYPos<=5 )
+    birdYPos = 7;
+  if ( birdYPos>=MAX_Y-5 )
+    birdDied();
+  updateCursor(birdXPos, birdYPos);
+}
+
+void birdDied() {
+  birdYPos = MAX_Y;
+  //somehow disable the up and down buttons?
+  //stop the pipes
+  playGame = 0;
+  resetGameState();
+}
+
+//timer interrupt
+interrupt(TIMER0_A0_VECTOR) Timer_0(void) {
+  static int clockDivide = 0;
+  if ( clockDivide++ > 20 ) {
+    clockDivide = 0;
+    updateShape();
+  }
+  
+  //if timerCount is zero update shape
+  if (!timerCount) {
+    updateBird();
+  }
+  // update count
+  timerCount++;
+  // reset every 10
+  if ( 5 == timerCount) {
+    timerCount = 0;
+  }
+}
+
+void resetGameState(void) {
+  birdXPos = 25;//10;
+  birdYPos = 25;//34;
+  birdXVel = 1;
+  birdYVel = 1;
+  
+  pipeVel = 4;
+  firstPipe = MAX_X;
+  playGame = 0;
+  gapTop = 35;
+  score = 0;
+  
+  updatePipe(firstPipe,pipeVel);
+  updateCursor(birdXPos, birdYPos);
+}

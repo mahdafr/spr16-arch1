@@ -1,0 +1,23 @@
+#include "shellsortp.h"
+
+//method to perform shell sort on array
+void shellSortPHelper(int **a, int len) {
+  int i, j, tmp;
+  //we traverse by jumping to halfway mark
+  //and moving to the left by 2
+  for ( int gap=len/2 ; gap>0 ; gap/=2 )
+    for ( i=gap+1 ; i<len ; i++ ) {
+      //now, we compare these elements with
+      //the current one we are examining
+      tmp = **(a+i);
+      for ( j=i-gap ; j>=0 && **(a+j)>tmp ; j-=gap )
+	//if we need to swap these elements, swap
+	**(a+j+gap) = **(a+j);
+      **(a+j+gap) = tmp;
+    } //end for: traversing array
+}
+
+void shellsortp(int **a, int len) {
+  //call to shell sort method
+  shellSortPHelper(a,len);
+}

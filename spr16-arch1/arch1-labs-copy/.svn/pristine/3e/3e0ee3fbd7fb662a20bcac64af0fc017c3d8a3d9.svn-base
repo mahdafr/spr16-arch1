@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include "calendar_utils.h"
+
+int main(void)
+{
+  int year = 2004;
+  int month = 15;
+  int day = 31;
+
+  int yearday = day_of_year(year, month, day);
+  printf("Date: %d-%d-%d\nYearday from date: %d\n", month, day, year, yearday);
+  
+  month_day(year, yearday, &month, &day);
+  printf("Date from yearday: %d-%d-%d\n", month, day, year);
+
+  return 0;
+}

@@ -1,0 +1,25 @@
+Complete the following exercise. We have deposited a program in your
+"ch6" directory that builds and prints a linked list containing
+name-and-age records it reads from a file. Memory for the linked list
+is dynamically allocated using malloc() and freed using free(). Your
+task is to modify this program so that the
+	 - name-and-age records are stored in a binary search tree
+	   sorted in lexographic order by name, and
+	 - name-and-age records are printed in lexographic order by
+	   an in-order tree traversal
+Your program should store all tree nodes in dynamically allocated
+memory and all dynamically allocated memory should be freed before
+your program terminates.
+     >> With the assistance of Joseph C in following the algorithm
+     	in the book provided for insertion in the binary search
+	tree, I am able to understand how I can insert my nodes.
+	I tried (and failed miserably) several times to understand
+	why I was getting errors in my implementations in my code,
+	until I realized I was not allocating space for the next
+	node to be created for insertion. This caused me some
+	errors in the segmentation fault/core dump area. Tdoay, I
+	was able to clearly look at my code and understand why it
+	wasn't working. Furthermore, outputting the information
+	in in-order was easy enough to do recursively as we will
+	output the left subtree, the current node, and then the
+	right subtree.

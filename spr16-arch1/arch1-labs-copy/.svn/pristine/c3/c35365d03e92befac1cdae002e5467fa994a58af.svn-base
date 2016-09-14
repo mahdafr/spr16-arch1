@@ -1,0 +1,51 @@
+@MahdokhtAfravi, 80483123
+Last Modified: 03.21.2016 Monday
+Description: CS3432 MSP430-Lab0
+
+Part 1: Modify sleep_600th.s to accurately delay 1/600th of a
+second. Your lab submission should include a file name readme.txt that
+clearly indicates how you
+     (1) computed the changes to this file
+     (2) tested that these changes function correctly
+     >> If there are needed to have (1/600)s for a loop:
+     	   (1s/600)*(10^6cycles/s) / 3 cycles/s = 555 cycles
+	delayed. So, decrementing from 555 until negative, we can
+	accurately delay the MSP430 to display the blinking of the
+	lights to alternate to 1/600th of a second. This math is
+	assuming that the clock frequency of the MSP430 is 1MHz,
+	another way of saying 1*10^6cycles/s. Timing of the LEDs is
+	expected to alternate colors every second. Running the make
+	file to test shows that the calculations were close enough to
+	being 1s for each light. Thus, I will leave the assembly file
+	as my submission for this part of the lab. The 3 cycles/s is
+	the mathematical representation of the assembly code of the
+	loop; it will have 3 cycles/s.
+
+Part 2: Create a new assembly language source file name led_s.s that
+implements a c-callable function led_control with the same semantics
+as the version defined in led_c.c. Your Makefile file should have:
+   (1) a new led_s.o production that builds led_s.o from led_s.s
+   (2) a new blink_s.elf production builds a program name blind_s.elf
+       that is linked with led_s.o rather than led_c.o. Note that the
+       "main" method for both blink_c.elf and blink_s.elf is the same
+       and defined within blink.c.
+   (3) a new "install_s" production builds blink_s.elf (if necessary)
+       and then installs it on a launchpad
+   (4) the default (all) production compiles blink_s.elf and
+       blink_c.elf
+   >> After several attempts, I have tried to built the blink_s.elf
+      by using the AS instead of CC as the configuration. Upon
+      searching from Google, I found that I would have to (in the
+      makefile) use a command something like:
+      	 ${AS} ${CFLAGS} -o $@ -c $<
+      which did not work either for building from the assembly code.
+      However, testing with the current commands found in the current
+      makefile I have uploaded to the SVN with this Readme, the test
+      runs fine and as expected which keeps the alternating lights
+      blinking as they should have been. I will visit a TA to see how
+      to approach this issue and if I am doing it wrong.
+      For this assignment, to utilize the pointers in the assebly
+      code, I had assistance from Chelsey J. who took the class a
+      year ago. She was the one who assisted me in using the .set
+      function at the top of the s file for this assignment, as well
+      as catching my syntax errors in the code.

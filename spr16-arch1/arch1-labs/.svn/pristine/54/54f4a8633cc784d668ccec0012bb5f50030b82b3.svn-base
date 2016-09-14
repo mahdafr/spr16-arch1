@@ -1,0 +1,22 @@
+Exercise 3-2: Write a function excape(s,t) that converts characters like newline and tab into visible escape sequences like \n and \t as it copies the string t to s. Use a switch. Write a function for the other direction as well, converting escape sequences into the real characters.
+	 >> I collaborated with Michael E and Joseph C in understanding the problem. To my understanding, the function will not have a return type (as it will copy from t to s, character by character). If the character at some index i is the newline (\n) or the tab (\t), we will copy it's sequences. The reverse 
+
+Exercise 3-4: In a two's complement number representation, our version of itoa does not handle the largest negative number, that is, the value of n equal to -(2^(wordsize-1)). Explain why not. Modify it to print that value correctly, regardless of the machine on which it runs.
+For this problem, there is no need to write a program. Just descrive why the problem occurs, how it can be addressed.
+void itoa(int n, char s[]) {
+     int i, sign; //record sign
+     if ( (sign=n)<0 )
+     	n = -n; //make n positive
+     i = 0;
+     do { //generate digits in reverse order
+     	s[i++] = n%10 + '0'; //get next digit
+     } while ( (n/=10)>0 ); //delete it
+     if ( sign<0 )
+     	s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+}
+	 >>
+
+Exercise 3-X: Write a function int itob(int val, int base, char *str, int nChars) that converts integer val into a string in str in radix base with limited field width nChars. The result string should be no longerthan nChars long. If the representation of val requires more than nChars, the string should be truncated. If the ASCII representation of val fits in nChars bytes, itob's return value should be the length of that string. Otherwise, if should return a negative value.
+	 >> 

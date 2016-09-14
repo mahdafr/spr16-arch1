@@ -1,0 +1,237 @@
+#include "lcd_utils.h"
+#include "drawBird.h"
+
+static u_char oldBirdTopMajor, oldBirdBotMajor, oldBirdLeft, oldBirdRight;
+
+#define birdRadius 2
+#define pipeSize 15//6
+#define GAP 18
+#define ARENA_LEFT GAP//GAP
+#define ARENA_RIGHT (44-GAP) //width of pipe
+#define ARENA_TOP GAP+20//GAP
+#define ARENA_BOT 44+GAP //44-GAP
+#define arenaTopMajor lcd_getYMajor(ARENA_TOP)
+#define arenaBotMajor lcd_getYMajor(ARENA_BOT+10)
+#define arenaTopMinor lcd_getYMinor(ARENA_TOP)
+#define arenaBotMinor lcd_getYMinor(ARENA_BOT)
+
+//static int pipeSize = 10;
+//old pipe top and pipe bottom
+static u_char oldPipeTopYMajor, oldPipeBotYMajor;
+
+#define getYMajor lcd_getYMajor
+#define getYMinor lcd_getYMinor
+u_char chunkPipe(u_char col, u_char rowMajor){
+  u_char chunk = 0;
+  if (col == ARENA_LEFT || col == ARENA_RIGHT) { // side columns
+    if (rowMajor == arenaTopMajor)                                // top chunk
+      chunk = 0xff ^ chunkMasks[arenaTopMinor];
+    else if (rowMajor == arenaBotMajor)                           // bot chunk
+      chunk = 0xff ^ ~chunkMasks[arenaBotMinor];
+    else if (rowMajor > arenaTopMajor && rowMajor < arenaBotMajor)  // mid chunk
+      chunk = 0xff;
+  } else if (col > ARENA_LEFT && col < ARENA_RIGHT) { // mid column
+    chunk = 0;
+    if (rowMajor == arenaTopMajor)                                // top row
+      chunk = chunkMasks[arenaTopMinor]  ^chunkMasks[arenaTopMinor+1];
+    else if (rowMajor == arenaBotMajor)                   // bot row
+      chunk = chunkMasks[arenaBotMinor] ^ chunkMasks[arenaBotMinor+1];
+  }
+  return chunk;
+}
+/*
+void ddrawPipe(void){
+  u_char col, rowMajor;
+  int i = 0;
+
+  for (col = 0; col < 44; col++){
+    for (rowMajor = 0; rowMajor < lcd_getYMajor(MAX_Y); rowMajor++){
+      lcd_writeChunkAddr(chunkPipe(col, rowMajor), col, rowMajor);
+    }
+  }
+  for (col = 0; col < 64; col++){
+    for (rowMajor = 0; rowMajor < lcd_getYMajor(MAX_Y); rowMajor++){
+      lcd_writeChunkAddr(chunkPipe(col, rowMajor), col, rowMajor);
+    }
+  }
+
+}
+void drawPipe(u_char yPos){
+  char pipeTopYMajor = getYMajor(yPos-pipeSize);
+  char pipeBotYMajor = getYMajor(yPos+pipeSize);
+  int i = 0;
+  u_char yMajorL;
+  u_char yMajorLimit = max(pipeBotYMajor, oldPipeBotYMajor);
+  u_char chunk = 0;; */
+  /*****Left and right bottom front pipe********/
+  /*for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(30, yMajorL+3);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+      //chunk = 0xff^chunkMasks[getYMinor(yPos)];
+    }else{
+      chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+	//      chunk = 0xff;
+      }
+      lcd_writeChunk(chunk);
+    }
+  }
+  for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(47, yMajorL+3);//47.5 middle
+
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+	//chunk = 0xff^chunkMasks[pipeTopYMajor];
+      }
+
+      lcd_writeChunk(chunk);
+    }
+    }*/
+  /*****Left and right top front pipe********/
+  /*for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(30, yMajorL-3);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+      }
+      lcd_writeChunk(chunk);
+    }
+  }
+  for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(47, yMajorL-3);//47.5 middle
+
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+      }
+
+      lcd_writeChunk(chunk);
+    }
+    }*/
+  /*****Left and right bottom back pipe********/
+  /*for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(67, yMajorL+4);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+
+      }
+      if (yMajorL == pipeBotYMajor){
+	chunk &= ~chunkMasks[4+getYMinor(yPos-pipeSize)];
+      }
+
+      lcd_writeChunk(chunk);
+    }
+  }
+  for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(84, yMajorL+4);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+
+      }
+      if (yMajorL == pipeBotYMajor){
+	chunk &= ~chunkMasks[4+getYMinor(yPos-pipeSize)];
+      }
+
+      lcd_writeChunk(chunk);
+    }
+    }*/
+  /*****Left and right top back pipe********/
+  /*for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(67, yMajorL-2);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+      }
+
+      lcd_writeChunk(chunk);
+    }
+  }
+  for (yMajorL = min(pipeTopYMajor, oldPipeTopYMajor); yMajorL <= yMajorLimit; yMajorL++,i++){
+    lcd_setAddr(84, yMajorL-2);//47.5 middle
+    if (yMajorL < pipeTopYMajor || yMajorL > pipeBotYMajor){
+      lcd_writeChunk(0);
+
+    }else{
+      u_char chunk = 0xff;//0xffu
+      if (yMajorL == pipeTopYMajor){
+	chunk &= ~chunkMasks[getYMinor(yPos-pipeSize)];
+
+      }
+
+      lcd_writeChunk(chunk);
+    }
+  }
+  oldPipeBotYMajor = pipeBotYMajor;
+  oldPipeTopYMajor = pipeTopYMajor;
+  }*/
+void drawBird(u_char birdX, u_char birdY)
+{
+  /* compute:bird left & right                                                                 
+     rectangular window that includes old & new ball */
+
+  u_char birdTop = birdY - birdRadius, birdBot = birdY + birdRadius;
+  u_char birdTopMajor = getYMajor(birdTop), birdBotMajor = getYMajor(birdBot);
+  u_char birdLeft = birdX - birdRadius, birdRight = birdX + birdRadius;
+
+  /* bounding rectangle surrounding old & new bird */
+  u_char boundLeft = min(oldBirdLeft, birdLeft);    /* left col */
+  u_char boundRight = max(oldBirdRight, birdRight); /* right col */
+
+  u_char rowMajor = min(oldBirdTopMajor, birdTopMajor);      /* top chunk number */
+  u_char rowMajorBound = max(oldBirdBotMajor, birdBotMajor); /* bot chunk number */
+  u_char chunkTop = lcd_majorToY(rowMajor); /* top row of top chunk */
+  for (; rowMajor <= rowMajorBound;         /* for all affected chunk #s */
+       rowMajor++, chunkTop += 8) {         /* next chunk 8*/
+    //lcd_setAddr(boundLeft, rowMajor); //boundLeft
+    lcd_setAddr(boundLeft, rowMajor);
+    u_char chunk = 0, col; //0
+    u_char chunkBot = chunkTop + 7;
+    if (rowMajor >= birdTopMajor && rowMajor <= birdBotMajor) {
+      //u_char chunkBot = chunkTop + 7; //7
+      u_char bitsMin = getYMinor(max(chunkTop, birdTop)); /* bits to set */
+      u_char bitsMax = getYMinor(min(chunkBot, birdBot));
+      u_char numBitsToSet = 1 + (bitsMax - bitsMin); //1
+      //chunk = set_range(numBitsToSet, bitsMin);
+      chunk = set_range(numBitsToSet, bitsMin);
+      //void lcd_writeChunkAddr(char chunk, u_char xAddr, u_char yAddr);
+      //lcd_writeChunkAddr(chunk, 0x1f, 0xee);
+    }
+    for (col = boundLeft; col < birdLeft; col++) /* left of bird */
+      lcd_writeChunk(0);
+    for (; col <= birdRight; col++) /* bird */
+      lcd_writeChunk(chunk);
+    for (; col <= boundRight; col++) /* right of bird */
+      lcd_writeChunk(0);
+  }
+  oldBirdTopMajor = birdTopMajor; oldBirdBotMajor = birdBotMajor;
+  oldBirdLeft = birdLeft; oldBirdRight = birdRight;
+}       

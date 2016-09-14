@@ -1,0 +1,9 @@
+all: exc3-2 exc3-4
+
+exc3-2: exc3-2.c
+	gcc -o exc3-2 exc3-2.c
+exc3-4: exc3-4.c
+	gcc -o exc3-4 exc3-4.c
+
+clean:
+	rm exc3-2 exc3-4

@@ -1,0 +1,55 @@
+//Exercise 3-2: Write a function excape(s,t) that converts characters like newline and tab into visible escape sequences like \n and \t as it copies the string t to s. Use a switch. Write a function for the other direction as well, converting escape sequences into the real characters.
+
+#include <stdio.h>
+
+void escapeF(char s[],char t[]) {
+  s = t;
+  int j = 0;
+  for ( int i=0 ; t[i]!='\0' ; i++ ) {
+    //printf("%c",t[i]); //debugging
+    switch ( t[i] ) {
+    case '\n':
+      s[j] = '\\';
+      s[++j] = 'n';
+      break;
+    case '\t':
+      s[j] = '\\';
+      s[++j] = 't';
+      break;
+    default:
+      s[j] = t[i];
+      j++;
+    } //end switch
+  } //end for: traversing s
+  //outputting t
+  for ( int i=0 ; s[i]!='\0' ; i++ )
+    printf("%s",s[i]);
+}
+
+void escapeR(char s[],char t[]) {
+  int j = 0;
+  for ( int i=0 ; t[i]!='\0' ; i++ ) {
+    switch ( t[i] ) {
+    case '\\':
+      if ( t[i++]=='n' ) s[j] = '\n';
+      if ( t[i++]=='t' ) s[j] = '\t';
+      break;
+    default:
+      s[j] = t[j];
+    } //end switch
+    j++;
+  } //end for: traversing t
+  //outputting s
+  for ( int i=0 ; s[i]!='\0' ; i++ )
+    printf("%s",s[i]);
+}
+
+int main(void) {
+  printf("Escape forward, t=hap\\npy, s=");
+  escapeF(" ","hap\npy");
+  
+  //printf("\nEscape reverse, t=hap\\npy, s=");
+  //escapeR("","hap\\npy");
+
+  return 0;
+}

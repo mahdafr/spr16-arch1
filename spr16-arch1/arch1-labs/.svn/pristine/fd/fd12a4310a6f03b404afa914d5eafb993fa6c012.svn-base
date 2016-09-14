@@ -1,0 +1,29 @@
+//Exercise 3-X: Write a function int itob(int val, int base, char *str, int nChars) that converts integer val into a string in str in radix base with limited field width nChars. The result string should be no longer than nChars long. If the representation of val requires more than nChars, the string should be truncated. If the ASCII representation of val fits in nChars bytes, itob's return value should be the length of that string. Otherwise, it should return a negative value.
+
+#include <stdio.h>
+
+int itob(int val, int base, char *str, int nChars) {
+  //this method will convert val to str
+  int len = 0; //our length of the number/string
+  //we will have a limited field width of nChars
+  str[nChars];
+
+  //grab the last number, adding it to str
+  do
+    str[len++] = val%base; //get rem in base
+  while ( (val/=base)>0 );
+
+  //if we have enough bytes, return the length; else, -1
+  if ( len<nChars ) return len;
+  //if we need more characters, truncate str
+  
+  return -1;
+}
+
+int main(void) {
+  //testing with 255,2,"",10 should return 8
+  printf("test1: %d\n",itob(255,2,"",10));
+  //testing with 2801,16,"",4 should return 3
+  //printf("test2: %d\n",itob(2801,16,"",4));
+  return 0;
+}

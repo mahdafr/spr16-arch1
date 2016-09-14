@@ -1,0 +1,28 @@
+Exercise 2-1: Write a program to determine the ranges of char, short, int, and long variables, both signed and unsigned, by printing appropriate values from standard headears and by direct computation. Harder if you compute them: determine the ranges of the various floating-point types.
+	 >> To approach this problem, I worked with Joseph C, and together we understood that the unsigned minimum values for each type (char, int, short, and long) were all 0, as unsigned includes only positive numbers. As a check, we know that the maximum positive value for an unsigned 8-bit char is 255, for an unsigned 16-bit short is 65535, for an unsigned 32-bit long and int is 4294967295. Furthermore, we know that the signed minimum's are found by starting with a negative value. From here, we can shift to the left (n-1)-bits (where n is 8, 16, 32, and 32, respectively, for char, short, int, and long types). In doing so, we find that the shifts to the left for signed characters will be 0s, thus finding the minimum signed value for each type. From here, we can find the maximum by applying 1's complement to this minimum value.
+	 There are no test cases as we can find these values to be verified mathematically utilizing the knowledge of 2^n binary rules. Thus, my exercise is complete with it's application of binary 1's complement and shifting in C to find the minimum and maximum values for these signed and unsigned types.
+
+Exercise 2-4: Refactor the code listed in ex2-4.c so that it follows good coding guidelines, is easy to read, and is easy to follow.
+	  >> I modified the code in ex2-4.c by applying my habits of indentation as well as updating the variable names to be more appropriate (or those which I would use were it my code), as can be found on my comments. This way, I have refactored the code so that another programmer may be more able to follow the statements more easily and understand just what the code is supposed to do.
+	  I noticed (just now, on Thursday 02-11 at 10:30pm) that I had missed the main method in my refactoring (changing the name variables) and had referred to the comparison of the 'squeeze' method by calling the strIndex (the iterator) instead of the strArray variable as the array variable. I fixed these and will add them (along with this updated readme) to the svn. I had not noticed these mistakes until I tried to compile - sorry!
+
+Exercise 2-3: Write the function htoi(s), which convers a string of hexadecimal digits (including an optional 0x or 0X) into its equivalent integer value. The allowable digits are 0 through 9, a through f, and A through F.
+	 >> WRITE HERE
+
+Exercise 2-X: Implement the following functions which should work for reasonable values of bits and lsb from 0 to 32, inclusive. Your documentation should describe their theory of operation. Each of these fuctios must (1) be no longer than six statements, and (2) not employ (or simulate) iteration or recursion over bit positions:
+	 - unsigned long set_bits(unsigned nSet) which returns an integer whose nset least significant bits are set (the rest are zero)
+	 - unsigned long set_range(unsigned nSet, unsigned lsb) which returns an integer whose lsb least significant bits are zero, and the successive nset bits are one
+	 - unsigned long invert_range(unsigned long val, unsigned nSet, unsigned lsb) which selectively inverts nset bits in val starting at bit lsb and returns that value
+	 Hint: your implementation of invert_range may utilize set_range and set_range may utilize set_bits as helper functions.
+	 >> Knowing that shitfing an unsigned integer to the left inserts 0, I can initialize my 32-bit number to all 1s, shift to the left by nSet, and not this result in order to produce the set_bit number. Test cases for this function includes: nSet = 4 (expected and actual outputs were 32-4=28 leading 0s followed by 1111=15), nSet = 6 (expected and actual outputs were 32-6=26 leading 0s following by 11 1111=63).
+	 My implementation of set_range will utilize the set_bit function by setting the number of nSet bits first, and then will shift the number left (which, in unsigned integers, inserts 0s) by lsb. Test cases include: nSet = 4, lsb = 4 (expected and actual outputs were 240) and nSet = 4, lsb = 6 (expected and actual outputs were 960.
+	 My implementation (in collaboration with Michael E and Joseph C) came to create a temporary variable with the nSet bits of 1 shifted by lsb bits, then using the bitwise exclusive-or properties to modify the value accordingly. Test cases for this method include val = 15, nSet = 1, lsb = 2 (expected and actual output was 11), and val = 32, nSet = 3, lsb = 1 (expected and actual output was 46).
+
+Exercise 2-9: In a two's complement number system, x &= (x-1) deletes the rightmost 1-bit in x. Explain why. Use this observation to write a faster version of bitcount.
+int bitcount(unsigned x) {
+    int b;
+    for ( b-0 ; x!=0 ; x>>=1 )
+    	if ( x & 01 ) b++;
+    return b;
+}
+	>> Performing a bitwise and operation with a binary number (which ends in 1) and its value less 1 (x & x-1) results in the last bit (which is a 1 in x and a 0 in x-1) being a 0, thus deleting this bit. We can shorten the bitcount method by modifying the condition of the loop to x&=(x-1) and removing the if condition, thereby incrementing b only when it sees 1s. Test cases include bitCount2(13), which correctly produced 3 and bitCount2(17) which correctly produced 2.

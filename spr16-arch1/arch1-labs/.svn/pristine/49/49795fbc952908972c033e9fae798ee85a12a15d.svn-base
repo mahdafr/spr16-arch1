@@ -1,0 +1,2 @@
+void update_state(void);
+void debounce(void);

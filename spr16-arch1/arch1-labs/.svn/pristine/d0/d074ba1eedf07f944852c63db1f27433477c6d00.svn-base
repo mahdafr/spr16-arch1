@@ -1,0 +1,52 @@
+#include <msp430.h>
+
+//state machine
+#define waitForUp 0
+#define waitForDn 1
+
+/* @author: Mahdokht Afravi
+ * @modified: 04/06 W
+ * this is my program for part2 of lab2-2
+ *  it will turn on the red when the button is pressed
+ *  and it will turn off when it is released
+ *  the green will remain unaffected
+ */
+
+void led_ctrl(void);
+
+unsigned char state = waitForDn;
+static unsigned char redCtr = 0;
+
+void btn() {
+  //called when interrupt occurs
+  if ( state == waitForUp ) {
+    state = waitForDn;
+    //interrupt sensitive to button down
+    P1IES |= BIT3;
+  } else {
+    //button is up
+    state = waitForUp;
+    //interrupt sensitive to button up
+    P1IES &= ~BIT3;
+  }
+  //clear interrupt
+  P1IFG &= ~BIT3;
+  led_ctrl();
+}
+
+void led_ctrl() {
+  char flag = 0;
+  //button is up: green on, red off
+  if ( state == waitForDn ) {
+    flag = BIT6;
+    flag |= ~BIT0;
+  } else {
+    //button is down: green on, red on
+    flag = BIT6;
+    flag |= BIT0;
+  }
+  //clear bits for off LEDs
+  P1OUT &= (0xff-(BIT0+BIT6)) | flag;
+  //set bits for on LEDs
+  P1OUT |= flag;
+}

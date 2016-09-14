@@ -1,0 +1,5 @@
+
+void flash(void);
+void btn(void);
+void led_control(void);
+

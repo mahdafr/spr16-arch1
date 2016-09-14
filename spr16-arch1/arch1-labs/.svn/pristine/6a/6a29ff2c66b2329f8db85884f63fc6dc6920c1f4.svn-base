@@ -1,0 +1,106 @@
+#include "draw_arena.h"
+#define CRADIUS 5		/* cursor radius */
+
+static u_char cursorX, cursorY;
+
+u_char cursorChunk(u_char col, u_char rowMajor) {
+  u_char chunk = 0;		/* default: transparent */
+
+  signed char deltaY;
+  u_char dotYMajor, dotYMinor, dotY;
+
+  // horiz dist from cursor center (+ for right)
+  signed char deltaX = (signed)cursorX - (signed)col; 
+  // col more than CRADIUS from cursor center?
+  if (max(deltaX, -deltaX) > CRADIUS)		      
+    return 0;					      /* no dot */
+
+  if (deltaX == 0)
+    deltaY = 0;
+  else if (deltaX > 0)		/* right of cursor */
+    deltaY = deltaX - CRADIUS;
+  else 	 // deltaX < 0
+    deltaY = deltaX + CRADIUS;
+
+  //if deltaX is between -1 and 1
+  if ( deltaX<2 && deltaX>-2 ) {
+    for ( deltaY = -CRADIUS ; deltaY<=CRADIUS ; deltaY++ ) {
+      dotY = cursorY + deltaY;	/* draw dot at dotY */
+      dotYMinor = lcd_getYMinor(dotY);
+      dotYMajor = lcd_getYMajor(dotY);
+      if ( dotYMajor==rowMajor ) /* dotY in this chunk? */
+	chunk += chunkMasks[dotYMinor] ^ chunkMasks[dotYMinor+1]; /* draw at dotY */
+    }
+  } else {
+    if ( (deltaX<=CRADIUS && deltaX>1) || (deltaX>=-CRADIUS && deltaX<-1) ) {
+      for ( deltaY=-1 ; deltaY<2 ; deltaY++ ) {
+	dotY = cursorY + deltaY; /* draw dot at dotY */
+	dotYMinor = lcd_getYMinor(dotY);
+	dotYMajor = lcd_getYMajor(dotY);
+	if ( dotYMajor==rowMajor ) /* dotY in this chunk? */
+	  chunk += chunkMasks[dotYMinor] ^ chunkMasks[dotYMinor+1];
+      }
+    }
+  } //end else
+  return chunk;
+}
+
+void updateCursor(u_char x, u_char y) {
+  cursorX = x; cursorY = y;
+  static u_char oldCursorX = MAX_X/2, oldCursorY = MAX_Y/2;
+
+  // determine extent of rectangle around both old & new cursor
+  u_char leftCol = min(cursorX, oldCursorX) - CRADIUS;
+  u_char rightCol = max(cursorX, oldCursorX) + CRADIUS;
+  u_char botRow = min(cursorY, oldCursorY) - CRADIUS;
+  u_char topRow = max(cursorY, oldCursorY) + CRADIUS;
+  
+  u_char topRowMajor = lcd_getYMajor(cursorY - CRADIUS);
+  u_char botRowMajor = lcd_getYMajor(cursorY + CRADIUS);
+
+  // remember current cursor position
+  oldCursorX = cursorX, oldCursorY = cursorY;
+
+  // redraw all chunks within old & new cursor
+  u_char col, rowMajor;
+  for (col = leftCol; col <= rightCol; col++)
+    for (rowMajor = topRowMajor ; rowMajor<=botRowMajor ; rowMajor++) {
+      //the ^ allows for transparency of the cursor OVER the arena boundaries; off when crossing
+      u_char chunk = cursorChunk(col, rowMajor) ^ arenaChunk(col, rowMajor);
+      lcd_writeChunkAddr(chunk, col, rowMajor);
+    }
+}
+
+#define arenaTopMajor lcd_getYMajor(ARENA_TOP)
+#define arenaBotMajor lcd_getYMajor(ARENA_BOT)
+#define arenaTopMinor lcd_getYMinor(ARENA_TOP)
+#define arenaBotMinor lcd_getYMinor(ARENA_BOT)
+
+u_char arenaChunk(u_char col, u_char rowMajor) {
+  u_char chunk = 0;   // default: transparent
+
+  // major and minor of top & bot
+
+  if (col == ARENA_LEFT || col == ARENA_RIGHT) { // side columns 
+    if (rowMajor == arenaTopMajor)	                          // top chunk       
+      chunk = 0xff ^ chunkMasks[arenaTopMinor];
+    else if (rowMajor == arenaBotMajor)  		          // bot chunk
+      chunk = 0xff ^ ~chunkMasks[arenaBotMinor];
+    else if (rowMajor > arenaTopMajor && rowMajor < arenaBotMajor)  // mid chunk
+      chunk = 0xff;
+  } else if (col > ARENA_LEFT && col < ARENA_RIGHT) { // mid column
+    chunk = 0;
+    if (rowMajor == arenaTopMajor) 				  // top row
+      chunk = chunkMasks[arenaTopMinor]  ^chunkMasks[arenaTopMinor+1];
+    else if (rowMajor == arenaBotMajor)			  // bot row
+      chunk = chunkMasks[arenaBotMinor] ^ chunkMasks[arenaBotMinor+1];
+  }
+  return chunk;
+}
+
+void drawArena(void) {
+  u_char col, rowMajor;
+  for (col = 0; col < MAX_X; col++)
+    for (rowMajor = 0; rowMajor < lcd_getYMajor(MAX_Y); rowMajor++)
+      lcd_writeChunkAddr(arenaChunk(col, rowMajor), col, rowMajor);
+}

@@ -1,0 +1,69 @@
+Exercise 4-14: Define a macro swap(t,x,y) that interchanges two
+arguments of type t. (Block structure will help.)
+	  >> Taking the approach of utilizing sizeof to ensure their
+length in bits will be equal, we can swap if this is true. So, my
+define will check if they are the same size in bits (long=long,
+int=int, etc.) and only then will I swap. My test cases include int
+for all 3, long for all 3, and then t and x are int, and y is
+short. This last case should not work. All tests work out fine (after
+realizing some silly errors.)
+
+Exercise 2: You have been provided with 5 files
+	 - swap.h: this includes a swap macro that swaps 2 integers
+	 - quicksort.c: this includes a definition of a recursive
+	   quicksort()
+	 - quicksort.h: this includes a declaration for the quicksort
+	   defined in quicksort.c
+	 - test_driver.c: a sorting test program
+	   -- the sorting function is selected by a macro named
+	      "SORT"
+	   -- SORT should be #defined to be the name of the function
+	      that sorts and whose declaration is in a file name
+	      SORT.h
+	 - Makefile: a makefile with appropriate rulesfor compiling
+	   quicksort.o and linking it to the result of compiling
+	   test_driver.c with "SORT" defined to be "quicksort"
+This is done by compiling test_driver.c using gcc's -D option
+"-DSORT=quicksort" which has the same effect as adding a "#define
+SORT quicksort" to the top of test_driver.c
+
+Part I: convert our functions, which use block-control structures,
+to goto-c.
+        - the only control statements must be if (condition) goto
+   	- no if/then, if/then/else, while loops, or for loops
+     	- all code must be indented in the proper style of goto
+	  code
+	  >> To convert a program which contains a loop from c to
+	     goto-c, we will need at least two goto statements.
+	     Convering if-statements to goto-c, we merely goto
+	     our jump spot by denoting it with a command name,
+	     which I utilized cont for "continue" since we will
+	     still check to sort the array. I also utilized
+	     "start" to symbolize where we will begin the sim-
+	     ulation of a loop, and the "end" means we stop
+	     simulating the loop with the ifs and gotos/jumps.
+	     Furthermore, we will exit the sorting algorithm
+	     entirely when the index "left" is greater than or
+	     equal to the "right" index - essentially, when will
+	     we stop and start reading the range to be sorted.
+
+Part II: implement a second sort that uses the same test driver
+without changing the first.
+	- Write a new sort function that implementsa bubble or
+	  shell sort (implementation using library calls is not
+	  allowed)
+	- Like the quicksort we provided, our function must be
+	  defined in a c source file and declared in a header
+	  file by the same name
+	- The Makefile should compile both our quicksort and
+	  your sort to object files and also provide versions
+	  linked to the tester defined in test_driver.c
+
+	  >> The header file has been created to call upon the
+	     sorting function (called shellsort), and will call
+	     upon the c-file which holds the function shellsort
+	     which is being called. The compiler then builds the
+	     object and executable files, and we test our algor-
+	     ithm. My shellsort implementation was then compiled
+	     and run - returning a result of being implemented
+	     and called on correctly.

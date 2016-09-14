@@ -1,0 +1,91 @@
+@MahdokhtAfravi, 80483123
+Last Modified: 03.24.2016 Thursday
+Description: CS3432 MSP430-Lab0
+
+Part 1: Modify sleep_600th.s to accurately delay 1/600th of a
+second. Your lab submission should include a file name readme.txt that
+clearly indicates how you
+     (1) computed the changes to this file
+     (2) tested that these changes function correctly
+     >> If there are needed to have (1/600)s for a loop:
+     	   (1s/600)*(10^6cycles/s) / 3 cycles/s = 555 cycles
+	delayed. So, decrementing from 555 until negative, we can
+	accurately delay the MSP430 to display the blinking of the
+	lights to alternate to 1/600th of a second. This math is
+	assuming that the clock frequency of the MSP430 is 1MHz,
+	another way of saying 1*10^6cycles/s. Timing of the LEDs is
+	expected to alternate colors every second. Running the make
+	file to test shows that the calculations were close enough to
+	being 1s for each light. Thus, I will leave the assembly file
+	as my submission for this part of the lab. The 3 cycles/s is
+	the mathematical representation of the assembly code of the
+	loop; it will have 3 cycles/s.
+
+Part 2: Create a new assembly language source file name led_s.s that
+implements a c-callable function led_control with the same semantics
+as the version defined in led_c.c. Your Makefile file should have:
+   (1) a new led_s.o production that builds led_s.o from led_s.s
+   (2) a new blink_s.elf production builds a program name blind_s.elf
+       that is linked with led_s.o rather than led_c.o. Note that the
+       "main" method for both blink_c.elf and blink_s.elf is the same
+       and defined within blink.c.
+   (3) a new "install_s" production builds blink_s.elf (if necessary)
+       and then installs it on a launchpad
+   (4) the default (all) production compiles blink_s.elf and
+       blink_c.elf
+   >> After several attempts, I have tried to built the blink_s.elf
+      by using the AS instead of CC as the configuration. Upon
+      searching from Google, I found that I would have to (in the
+      makefile) use a command something like:
+      	 ${AS} ${CFLAGS} -o $@ -c $<
+      which did not work either for building from the assembly code.
+      However, testing with the current commands found in the current
+      makefile I have uploaded to the SVN with this Readme, the test
+      runs fine and as expected which keeps the alternating lights
+      blinking as they should have been. I will visit a TA to see how
+      to approach this issue and if I am doing it wrong.
+      For this assignment, to utilize the pointers in the assebly
+      code, I had assistance from Chelsey J. who took the class a
+      year ago. She was the one who assisted me in using the .set
+      function at the top of the s file for this assignment, as well
+      as catching my syntax errors in the code.
+
+Part 3: Mobile devices are severely energy limited. To conserve
+     energy, their displays are dimmed by quickly flashing the
+     illuminator LEDs on and off. Your task is to implement a
+     program named "dimmer" that similarly illuminates an LED in a
+     slow repeating pattern of bright-med-dim, where the LED is
+     illuminated
+	- 90% of the time when bright
+	- 40% of the time when med
+	- 10% of the time when dim
+     Dimmer should flash the LED on and off just frequently
+     enough that a human does not perceive flicker. Your work
+     should include figuring out how frequently the LED must be
+     flashed so that humans do not perceive its flicker.
+     	>> My dimmer method (with the assistance of David, thanks!),
+	   I was able to understand how to approach the problem from
+	   a mathematical perspective. I worked with Michael E. in
+	   order to implement the program which does not actually
+	   utilize any sleep function, so I did not need these in my
+	   Makefile. However, I edited the led_control(...) method
+	   so that I would only control the red (the 6th bit of the
+	   P1OUT_ADDR) and so this is my version of "sleep" (turning
+	   on and off the LED). The implementation Michael and I
+	   agreed on was to use the modulus function to grab the
+	   remainder of some arbitrary counter (I used i from 5000
+	   down to 0). In this way, we can control the on/off cycles
+	   of each of the levels of brightness:
+	      - brightest: if i has some remainder under 9
+	      	(inclusive) and we turn on the LED, this will be the
+		90% of the time the LED will be on; the other 10% is
+		when the modulus is 0.
+	      - dimmest: this is the opposit of the brightest, so we
+	      	only turn on the LED when the remainder is 0, and
+		all else i, we will leave the LED off.
+	      - medium: if i has some remainder which is at least 4,
+	      	we will turn on the LED, else, we leave it off.
+	   The cycles for all of these functions will run rapidly
+	   enough such that the LED will only dim and brighten, and
+	   will not show flickering. Testing this code has provided
+	   the expected results.

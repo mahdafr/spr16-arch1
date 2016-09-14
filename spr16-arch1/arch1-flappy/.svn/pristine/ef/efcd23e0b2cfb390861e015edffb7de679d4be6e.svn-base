@@ -1,0 +1,58 @@
+#include "lcd_utils.h"
+#include "drawPipe.h"
+
+#define pipeRadius 4
+
+static u_char currentX;
+u_char currentY = 0;
+
+u_char pipeChunk(u_char col, u_char rowMajor) {
+  u_char chunk = 0; // default: transparent
+  signed char deltaX, deltaY;
+  u_char dotYMajor, dotYMinor, dotY;
+
+  //horiz dist from center of the screen
+  deltaX = (signed)currentX - (signed)col;
+
+  if ( deltaX<=pipeRadius )
+  for ( deltaY=0 ; deltaY<=MAX_Y ; deltaY++ ) {
+    dotY = deltaY;// + currentY; //draw at dotY
+    dotYMinor = lcd_getYMinor(dotY);
+    dotYMajor = lcd_getYMajor(dotY);
+    if ( dotYMajor==rowMajor ) //dotY in this chunk?
+      chunk += chunkMasks[dotYMinor] ^ chunkMasks[dotYMinor+1]; //draw at dotY
+  }
+  if ( deltaX>=-pipeRadius )
+  for ( deltaY=5 ; deltaY<=MAX_Y/2 ; deltaY++ ) {
+    dotY = deltaY;// + currentY; //draw at dotY
+    dotYMinor = lcd_getYMinor(dotY);
+    dotYMajor = lcd_getYMajor(dotY);
+    if ( dotYMajor==rowMajor ) //dotY in this chunk?
+      chunk += chunkMasks[dotYMinor] ^ chunkMasks[dotYMinor+1]; //draw at dotY
+  }  
+  return chunk;
+}
+
+void drawPipe(u_char pipeX) {
+  static u_char oldPipeX = MAX_X/2, oldPipeY = MAX_Y/2;
+
+  //determine extent of rectangle around both old and new pipe
+  u_char leftCol = min(pipeX, oldPipeX) - pipeRadius;
+  u_char rightCol = max(pipeX, oldPipeX) + pipeRadius;
+
+  u_char topRowMajor = lcd_getYMajor(min(currentY,oldPipeY));
+  u_char botRowMajor = lcd_getYMajor(max(currentY,oldPipeY));
+
+  //remember current pipe position
+  oldPipeX = pipeX, oldPipeY = currentY;
+  currentX = pipeX, currentY = oldPipeY;
+
+  //redraw all chunks within old and new pipe
+  u_char col, rowMajor, chunk;
+  for ( col=leftCol ; col<=rightCol ; col++ )
+    for ( rowMajor=topRowMajor ; rowMajor<=botRowMajor ; rowMajor++) {
+      chunk = pipeChunk(col,rowMajor);
+      lcd_writeChunkAddr(chunk,col,rowMajor);
+      //reset writing the chunk
+    }
+}

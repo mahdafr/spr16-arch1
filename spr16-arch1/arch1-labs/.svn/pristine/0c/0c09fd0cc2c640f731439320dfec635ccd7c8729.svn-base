@@ -1,0 +1,15 @@
+//Exercise 1-15: Rewrite the temperature conversion program of Section 1.2 to use a function for conversion.
+
+#include <stdio.h>
+
+void toCelsius(int i) {
+  double fahr = (double) i;
+  double cels = 5*(fahr-32)/9; //formula from fahrenheit to celsius
+  printf("Fahrenheit: %.2d, Celsius: %.2d\n",fahr,cels); //output
+}
+
+void main(void) {
+  for ( int i=0 ; i<300 ; i+=50 ) { //do every 50-th measurement of F-C conversion
+   toCelsius(i); //call to method: solve and print
+  }
+}

@@ -1,0 +1,20 @@
+1. Bounds checking:
+   In ch5/calendar directory are:
+      - calendar_utils.c: defines methods day_of_year and month_day
+        from K&R chapter 5.
+      - calendar_utils.h: declares (global) methods defined in
+      	calendar_utils.c
+      - calendar_test.c: implements simple tests of calendar_utils
+      	which quietly generate erroneous results for a bogus date
+	that does not exceed array bounds.
+   Your task is to
+      - add bounds checking to the methods in calendar_utils.c
+      - modify calendar_test.c to cause calendar_utils to trigger
+      	the bounds checking mechanisms you implemented
+   It is up to you to define "appropriate" behavior for these
+   exceptional conditions. Appropriate does not include segfaults,
+   core dumps, corruption of data structures, or quietly returning
+   erroneous results.
+   Your readme.txt should describe the extension of the error
+   detection, handling, and triggering that you implement.
+   	>> 

@@ -1,0 +1,9 @@
+Exercise 4-14: Define a macro swap(t,x,y) that interchanges two
+arguments of type t. (Block structure will help.)
+	  >> Taking the approach of utilizing sizeof to ensure their
+length in bits will be equal, we can swap if this is true. So, my
+define will check if they are the same size in bits (long=long,
+int=int, etc.) and only then will I swap. My test cases include int
+for all 3, long for all 3, and then t and x are int, and y is
+short. This last case should not work. All tests work out fine (after
+realizing some silly errors.)

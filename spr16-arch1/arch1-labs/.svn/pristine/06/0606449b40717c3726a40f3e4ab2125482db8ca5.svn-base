@@ -1,0 +1,54 @@
+Mahdokht Afravi
+CS 3432 MSP430 Lab3: LCD Game
+Last Modified: 04/17 Sun
+
+Part 1
+     1. Change the cursor movement step size to one pixel in both
+     	the vertical and horizontal directions.
+     2. The cursor's shape and size should not be changed.
+     3. The transparent-overlap bug in our demonstration program
+     	should be fixed.
+     4. The cursor movements will be restricted to the LCD's
+     	boundaries.
+	>> For this part of the lab, I worked with both Michael E.
+	   and Chris McKye. To move the cursor one pixel in both
+	   directions (vertical and horizontal), we traced the
+	   movement of this cursor to be in the updateShape()
+	   method. We set the decrements/increments of both shapeY
+	   and shapeX to have a degree of 1 instead of the 2 where
+	   they were originally. Testing this showed our cursor
+	   moving one pixel at a time.
+	   In order to restrict the boundaries of the cursor's
+	   movements to stay only on the LCD screen, I modified
+	   the limits on both shapeX and shapeY: shapeX can only
+	   move if it's furthest edges (radius being 5) is less
+	   than 91 (96-5) and greater than 5 (5-0), and shapeY
+	   can only move if it's furthest edges (when the radius
+	   is 5) is less than 61 (68-5) and greater than 5 (5-0).
+	   As far as the overlap boundary not being distorted and
+	   should be visible, this was already implemented when
+	   I began this assignment and so there is nothing to do
+	   for this part of the assignment.
+
+Part 2: Cursor Modification
+     1. For this section, you will be changing the geometry of the
+     	   cursor as illustrated. Since I am in team 1, my ID is
+	   an odd number, I will make a "plus" cursor.
+	Minimum cursor size: 10x10 pixels.
+	Your cursors don't need to exactly math ours. For example,
+	   they would probably look much better if their size was
+	   an odd rather than even number of pixels.
+	It is not acceptable to simply translate or render sprites.
+	Your cursos must be computed on-demand from properties of
+	   their geometry (like the arena and cursor of the
+	   demonstration programs).
+	>> For this part of the lab, I worked again with Chris
+	   McKye and Michael Ellis. The two variables, deltaY and
+	   deltaX, are the deviations from center of the cursor,
+	   being dotY the row in which the origin of the cursor
+	   is represented.
+
+Part 3: Create a game*. Chris McKye and I worked on creating a
+     Flappy Bird game for this part of the lab. I worked on making
+     the pipes of the game, and Chris worked on the bird part of
+     the game. 

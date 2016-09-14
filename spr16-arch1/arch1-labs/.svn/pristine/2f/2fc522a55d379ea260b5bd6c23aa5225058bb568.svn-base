@@ -1,0 +1,62 @@
+Mahdokht Afravi, 80483123
+CS 3432: Arch1
+Lab2-2: Interrupts, State Machines, & Debouncing Last
+Modified: 04.07.2016 R
+
+Part a:
+  Step 1. Modify the a-buttonInterrupt to instead illuminate the
+  green led when the button is pressed (and not when it is released).
+  Step 2. Implement a new program that toggles the green LED and
+  illuminates the red LED when the button is pressed. The red LED
+  should be off and green LED should not change when the button is
+  released. Don't bother to debounce.
+  	>> As step 1 was already done when first testing the MSP430
+	   and running the make install command, I will work right
+	   into step 2. This code will be implemented in a new file:
+	   buttonIOA2.c, which will use buttonIOA.c as a model for
+	   how to handle button presses. This program will have a
+	   different implementation of the led_ctrl() in that it will
+	   toggle on/off the green LED, and turn on the red LED only
+	   when and while the button is pressed. To run this program,
+	   I modified the interrupts.s assembly file to implement
+	   this new buttonIOA2.c and not the original buttonIOA.c
+	   The program will start with the green LED on (because I
+	   changed the buttonMain.c P1OUT to be on for BIT6). When
+	   the button is pressed and while it is down, I set the
+	   flag to have the BIT0 to be on, and depending on if BIT6
+	   was on or not, it will be flipped from what it was. My
+	   changes can be found the buttonMain.c as well as the
+	   interrupts.s files, and the implementation of the
+	   code in buttionIOA2.c The Makefile has the command
+	   of install2 in order to install on the MSP430.
+
+Part b:
+  Modify the b-flash program to
+     - flash the red LED every 1s, and
+     - flash the green LED every 0.25s
+        >> In order to turn on the green LED 4 times/sec, it will
+	   turn off for each time that the count is at least 100.
+	   Then we reset the value of the green LED (BIT6). To get
+	   the red LED to turn on every second, we can use the
+	   modulus property of this counter variable up to 100.
+	   If it is one of these remainders, say 0, the red LED
+	   will be turned on. For this assignment, my program
+	   would not run correctly. Instead of toggling LEDs on
+	   appropriate intervals, both lights would remain on at
+	   all times. With help from Chelsey J. and David P., we
+	   were able to find the problem, which ended up being
+	   my declaration of the variables to be static, which in
+	   my implementation, they were not. Thankfully, this was
+	   solved in code and was not a problem with my MSP430
+	   device as I originally expected.
+	
+Part c:
+  Create a new program "c-combined" with the following behavior:
+     - the red LED is toggled every time the button is pressed, it
+       should not change when the button is released.
+     - the green LED flashes when the button is up. Its flash rate
+       is determined by the red LED's state. It should flash at a
+       rate of
+   	  = 4 MHz when the red LED is on, or
+	  = 1 Hz when the red LED is off
+	>>

@@ -1,0 +1,47 @@
+#include "calendar_utils.h"
+
+static char daytab[2][13] = {
+  {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+  {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+};
+
+/* day_of_year:  set day of year from month & day */
+int day_of_year(int year, int month, int day)
+{
+  //bounds check: month is not greater than 12
+  if ( month > (*(daytab+12))[13] ) return -1;
+  //bounds check: month is a negative or 0
+  if ( month <= 0 ) return -1;
+
+  //bounds check: day is appropriate for that month
+  //this check is found in the for loop below...
+  //bounds check: day is a negative or 0
+  if ( day <= 0 ) return -1;
+  
+  int i, leap, d = day;
+  leap = (year%4 == 0 && year%100) != 0 || year%400 == 0;
+  for (i = 1; i < month; i++) {
+    //bounds check: day is appropriate for that month
+    if ( d>daytab[leap][i] ) return -1;
+    day += daytab[leap][i];
+  }
+  return day;
+}
+
+/* month_day:  set month, day from day of year */
+void month_day(int year, int yearday, int *pmonth, int *pday)
+{
+  //bounds check: only calculate if yearday is less than 367
+  if ( yearday <= 0 ) {
+    *pmonth = 0;
+    *pday = 0;
+  }
+  if ( yearday <= 366 ) {
+    int i, leap;
+    leap = (year%4 == 0 && year%100) != 0 || year%400 == 0;
+    for (i = 1; yearday > daytab[leap][i]; i++)
+      yearday -= daytab[leap][i];
+    *pmonth = i;
+    *pday = yearday;
+  }
+}

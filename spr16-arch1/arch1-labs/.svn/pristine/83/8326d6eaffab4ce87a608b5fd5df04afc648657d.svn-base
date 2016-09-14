@@ -1,0 +1,26 @@
+#include "msp430.h"
+
+void update_state() {
+  switch ( state ) {
+  //if we are starting, everything is off
+  case 0:
+    //everything is off
+    P1OUT &= ~BIT0; //red is off
+    P1OUT &= BIT6; //green is off
+    while ( (P1IN & BIT3) ) ; //stay in this state
+    break;
+    //if we are in the first state
+  case 1:
+    //red is on, green is off
+    P1OUT |= ~BIT0; //red is on
+    P1OUT &= BIT6; //green is off
+    while ( !(P1IN & BIT3) ) ; //stay in this state
+    break;
+  //if we are in the second state
+  case 2:
+    P1OUT &= ~BIT0; //red is off
+    P1OUT |= BIT6; //green is on
+    while ( !(P1IN & BIT3) ) ; //stay in this state
+    break;
+  }
+}

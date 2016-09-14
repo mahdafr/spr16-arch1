@@ -1,0 +1,51 @@
+05/17 T - Team Flappy Readme
+Mahdokht Afravi (Pipes and Score)
+I worked on the pipes for the flappy game project. In order to
+draw multiple pipes for the game, I took a more hard-coded
+approach in my implementation. I wrote a method (one influenced
+by the update cursor method) to establish at which columns of
+the LCD will the pipes be drawn. My implementation then called
+the pipeChunk method (influenced by the cursorChunk method) to
+draw the pipe in its design (with a 'lip' on the openings of
+the pipes). I then came to issues on how to move the pipes to
+the left, simulating the bird's flight through the LCD obstacle
+course of pipes. I then considered which of the regions the
+first pipe would be drawn in, and I considered a division of 3
+regions of the LCD screen. Depending on which boundaries which
+of the three pipes on the screen would be in, it would be a
+continuation of whatever the pipe was in the right boundaries.
+This would ensure the LCD would not look as if a new pipe is
+drawn in each of the boundaries I had created. Furthermore,
+I integrated the score to be written on the board with the
+pipes and used the properties of exclusive-or in order to have
+drawn the chunk of the pipe transparent under the score so the
+score will be shown if there is a pipe under it. Another issue
+faced in this game was the collision between the bird and the
+pipes. I approached this by saving the upper boundary of the
+gap for the pipe that the bird will 'cross'. Each time the
+bird passes through the pipe, if it is going within the gap's
+boundaries of the pipe, then the score would increment. If not,
+the score should remain the same and the bird would 'die', so
+that the game would end. Another thing which Chris helped me
+tremendously on was integrating the bird and pipes/score
+into the main game.c file.
+
+Christopher McKye (Bird)
+I worked on the bird sprite. Initially I wanted to have the bird
+move in a forward direction but I could not get the bird to move
+on its own. Instead I implemented button state changes for the birds
+movements. I bird has the ability to move up and down with p2Up and
+p2Down by checking if p2Up is AND'd with power to move up, or if p2Down
+is AND's with power. This moved the bird up or down.
+In order to actually animate the movement, I had to save the old
+position and redraw the new postion. This gave the impression of
+animating up or down. To draw the actually sprite, I checked for the row
+major 0 or 1 to operate in. If I was in row major 0 then I incremented
+the y value and wrote a bit to that place. If I was in the major 1 then I
+would decrement the y value and then write the bit. I wrote by column and
+a series of condition statements to make my bit in a certain place.
+I tried to do a mirror image on both sides of the column to make the sprite
+symetric. The bird does have collison detection with the pipes but due
+to timing of the clock, I was not able to pinpoint collisions so it was
+off all the time. So hence I took out the collision detection and just
+decided have the pipes determine collision.

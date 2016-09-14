@@ -1,0 +1,22 @@
+# Mahdokht Afravi, 80483123
+# CS 3432 Arch1, Lab2-1
+# Last Modified: 03.27 U
+
+CPU = msp430g2553
+CFLAGS = -mmcu=${CPU}
+CC = msp430-gcc
+AS = msp430-as
+
+all: load_c
+# compile led_press.c to a loadable elf file (default production)
+toggle_c.elf: led_press.o
+	${CC} ${CFLAGS} -o $@ $^
+# load elf file onto launchpad
+load_c: toggle_c.elf
+	mspdebug rf2500 "prog toggle_c.elf"
+# removing all files created from compilation
+clean:
+	rm -f *.o *.elf
+
+# object file for main function
+led_press.o: led_press.c

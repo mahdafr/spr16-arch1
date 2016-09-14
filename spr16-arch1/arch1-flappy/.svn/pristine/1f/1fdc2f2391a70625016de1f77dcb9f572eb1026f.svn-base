@@ -1,0 +1,70 @@
+#include "lcd_utils.h"
+#include "drawBird.h"
+
+static u_char oldBirdTopMajor, oldBirdBotMajor, oldBirdLeft, oldBirdRight;
+
+#define birdRadius 2
+#define pipeSize 15//6
+#define GAP 18
+#define ARENA_LEFT GAP//GAP
+#define ARENA_RIGHT (44-GAP) //width of pipe
+#define ARENA_TOP GAP+20//GAP
+#define ARENA_BOT 44+GAP //44-GAP
+#define arenaTopMajor lcd_getYMajor(ARENA_TOP)
+#define arenaBotMajor lcd_getYMajor(ARENA_BOT+10)
+#define arenaTopMinor lcd_getYMinor(ARENA_TOP)
+#define arenaBotMinor lcd_getYMinor(ARENA_BOT)
+
+//static int pipeSize = 10;
+//old pipe top and pipe bottom
+static u_char oldPipeTopYMajor, oldPipeBotYMajor;
+
+#define getYMajor lcd_getYMajor
+#define getYMinor lcd_getYMinor
+
+void drawBird(u_char birdX, u_char birdY)
+{
+  /* compute:bird left & right                                                                 
+     rectangular window that includes old & new ball */
+
+  u_char birdTop = birdY - birdRadius, birdBot = birdY + birdRadius;
+  u_char birdTopMajor = getYMajor(birdTop), birdBotMajor = getYMajor(birdBot);
+  u_char birdLeft = birdX - birdRadius, birdRight = birdX + birdRadius;
+
+  /* bounding rectangle surrounding old & new bird */
+  u_char boundLeft = min(oldBirdLeft, birdLeft);    /* left col */
+  u_char boundRight = max(oldBirdRight, birdRight); /* right col */
+
+  u_char rowMajor = min(oldBirdTopMajor, birdTopMajor);      /* top chunk number */
+  u_char rowMajorBound = max(oldBirdBotMajor, birdBotMajor); /* bot chunk number */
+  u_char chunkTop = lcd_majorToY(rowMajor); /* top row of top chunk */
+
+  for (; rowMajor <= rowMajorBound;         /* for all affected chunk #s */
+       rowMajor++, chunkTop += 8) {         /* next chunk 8*/
+    lcd_setAddr(boundLeft, rowMajor);
+    u_char chunk = 0, col; //0
+    u_char chunkBot = chunkTop + 7;
+    /*if (rowMajor <= birdTopMajor && rowMajor >= birdBotMajor) {
+      u_char bitsMin = getYMinor(max(chunkTop, birdTop)); 
+      u_char bitsMax = getYMinor(min(chunkBot, birdBot));
+      u_char numBitsToSet = 1 + (bitsMax - bitsMin); 
+      chunk += set_range(numBitsToSet, bitsMin);
+    }*/
+    if (rowMajor >= birdTopMajor && rowMajor <= birdBotMajor){
+      u_char bitsMin = getYMinor(max(chunkTop, birdTop)); /* bits to set */
+      u_char bitsMax = getYMinor(min(chunkBot, birdBot));
+      u_char numBitsToSet = 1 + (bitsMax - bitsMin); //1
+      chunk += set_range(numBitsToSet, bitsMin);
+      
+    }
+    
+    for (col = boundLeft; col < birdLeft; col++) /* left of bird */
+      lcd_writeChunk(0);
+    for (; col <= birdRight; col++) /* bird */
+      lcd_writeChunk(chunk);
+    for (; col <= boundRight; col++) /* right of bird */
+      lcd_writeChunk(0);
+  }
+  oldBirdTopMajor = birdTopMajor; oldBirdBotMajor = birdBotMajor;
+  oldBirdLeft = birdLeft; oldBirdRight = birdRight;
+}       

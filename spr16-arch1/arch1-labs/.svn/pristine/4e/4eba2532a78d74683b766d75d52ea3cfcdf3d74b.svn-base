@@ -1,0 +1,6 @@
+all: ex2-1 ex2-4
+
+ex2-1: ex2-1.c
+	gcc -o ex2-1 ex2-1.c
+ex2-4: ex2-4.c
+	gcc -o ex2-4 ex2-4.c

@@ -1,0 +1,26 @@
+Ch1 Lab: Readme file
+
+Exercise 1-10: Write a program to copy its input to its output, replacing each tab by \t, each backspace by \b, and each backslash by \\. This makes tabs and backspaces visible in an unambiguous way.
+	 >> For the test cases, my program runs if we utilize ctrl-Q in order to enter tab as input for the program. Also, in order for the program to read as input the backspace, the input accepted as backspace will be ctrl-H. Lastly, to accept input of \, the backspace character will be outputted using the operator \ followed by the character to output '\'.
+
+Exercise 1-11: How would you test the word count program? What kinds of input are most likely to uncover bugs if there are any?
+	 >> I would run some test cases to see if the input would allow for spaces between words (in other words, will the scanner be reading input as the line or up the space?). I would also test an input with "\n" to be sure it would run both the first two if statements (incrementing n1 and setting state to OUT), this should also break from running the else statement. Since there is a condition containing the empty character ' ', I would test the program with an input string beginning with an empty character, and check if it counts the word.
+
+Exercise 1-15: Rewrite the temperature conversion program of Section 1.2 to use a function for conversion.
+	 >> My implementation of utilizing a function is to write the function of conversion in another method, and output the conversion from Fahrenheit and to Celsius. Upon the completion of the method call, the program will continue to calculate for every 50-th conversion of Fahrenheit to Celsius between 0 and 300.
+
+Exercise 1-20: Write a program detab that replaces tabs in the input with the proper number of blanks to space to the next tab stop. Assume a fixed set of tab stops, say every n columns. Should n be a variable or a symbolic parameter?
+	 >> I have found that tab in this system is fixed at 8, so my n will be 8. The program will loop to accept input, and will increment the number of columns I have accumulated. Then, by using the mod function of 8, the counter variable will count how many spaces will be needed to indent the text nicely.
+
+1-X: Write a program that performs one of the following temperature conversions:
+     - converts from Celsius to Rankine: the formula is R = (C+273.15)*9/5
+     - converts from Rankine to Celsius: the formula is C = (R*5/9)-273.15
+     - converts from Fahrenheit to Kelvin: the formula is K = (F+459.67)*5/9
+     - converts from Kelvin to Fahrenheit: the formula is F = (K*9/5)-459.67
+     You should print out a short list of conversions.
+     	 >> I will implement the conversion of Celsius to Rankine, and output these values (every 50th degree from 0 to 300 Celsius). The method calls will calculate the value (to double) and output the data in a table-like format.
+
+makefile: running the command "make all" will execute the rules. Chris K helped me with my makefile by overpassing the creation of the .o files, so that I do not even have to use the "make clean" rules to exectue.
+
+
+- Mahdokht Afravi

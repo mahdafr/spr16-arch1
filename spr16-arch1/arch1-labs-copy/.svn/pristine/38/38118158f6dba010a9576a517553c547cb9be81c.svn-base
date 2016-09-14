@@ -1,0 +1,14 @@
+	;; sleep: 10ms
+	;; @author: Mahdokht Afravi
+	;; @modified: 03.30 W
+
+	.arch		ms430g2553
+	.p2align	1,0
+	.text
+
+sleep:
+	mov #555,r15		; number iterations
+loop:
+	sub #1,r15		; loop until 0
+	jne loop
+	ret

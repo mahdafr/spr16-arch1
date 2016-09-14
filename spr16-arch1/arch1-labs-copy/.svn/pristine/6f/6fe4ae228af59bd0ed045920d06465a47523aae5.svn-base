@@ -1,0 +1,13 @@
+all: exc1-10 exc1-15
+exc1-10: exc1-10.o
+	gcc exc1-10.o -o exc1-10
+exc1-15: exc1-15.o
+	gcc exc1-15.o -o exc1-15
+
+exc1-10.o: exc1-10.c
+	gcc -c exc1-10.c
+exc1-15.o: exc1-15.c
+	gcc -c exc1-15.c
+
+clean:
+	rm -r *.o

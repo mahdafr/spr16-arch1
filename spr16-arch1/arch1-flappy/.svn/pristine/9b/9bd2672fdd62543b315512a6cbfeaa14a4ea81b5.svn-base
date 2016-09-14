@@ -1,0 +1,7 @@
+#ifndef _DRAW_PIPE_H
+#define _DRAW_PIPE_H
+
+u_char pipeChunk(u_char col, u_char rowMajor);
+void drawPipe(u_char pipeX);
+
+#endif

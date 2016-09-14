@@ -1,0 +1,36 @@
+#include <msp430.h>
+
+// for flashRED state machine
+static unsigned char ledState = 0; /* boolean: true = red led on */
+static unsigned char count = 0;
+unsigned char green = 0;
+
+void led_control();
+
+void timerHandler() {
+  count++;
+  if ( count>=100 ) {        /* delayed long enough? */
+    //green is on 25% of the time
+    if ( count%25==0 )
+      green = 1;
+    else
+      green = 1-green;
+    //red is on 4 times as often as green
+    if ( count%4==0 )
+      ledState = 1;
+    else
+      ledState = 1-ledState; /* flip state */
+    count = 0;               /* reset counter */
+    led_control();
+  }
+}
+
+void led_control() {	     /* not a state machine: set LEDs from state variables */
+  char flag = 0;
+  if ( ledState )                     // red on
+    flag |= BIT0;
+  else                                // green on
+    flag |= BIT6;
+  P1OUT &= (0xff-(BIT6+BIT0)) | flag; // clear bit for off leds
+  P1OUT |= flag;		      // set bit for on leds
+}

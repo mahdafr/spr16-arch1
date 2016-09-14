@@ -1,0 +1,45 @@
+#include <msp430.h>
+#include "stateMachines.h"
+
+void mcOsc1MHz(void) 		/* set master clock to 1MHz */
+{ 
+
+  BCSCTL1 = CALBC1_1MHZ;   // Set range 
+  DCOCTL = CALDCO_1MHZ;	   
+  BCSCTL2 &= ~(DIVS_3);    // SMCLK = DCO / 8 = 1MHz 
+} 
+
+void main(void) 
+{  
+  WDTCTL = WDTPW + WDTHOLD;		// Stop watchdog timer
+  mcOsc1MHz();				// Set master osc to 1MHz
+
+  // setup counter 0 to interrupt every 10ms
+  CCTL0 = CCIE;				// CCR0 interrupt enabled
+  TACTL = TASSEL_2 + MC_1;	        // Set timer clock to 1 Mhz
+  CCR0 = 10000;				// 1e4 / 1e6 = 10 ms
+
+  // Setup P1
+  //   input:
+  //    P1.0 red led (1=on)
+  //	P1.6 green led (1=on)
+  //   output:
+  //	P1.3 button (0=down, needs resistor pull up)
+  P1OUT &= 0x00;			// P1: initially zero and all input
+  P1DIR &= 0x00;               
+
+  // setup P1.0 and P1.6 for output to LEDs
+  P1DIR |= BIT0 + BIT6;			// bits attached to leds are output
+
+  // setup P1.3 (input from push button) to interrupt 
+  P1REN |= BIT3;			// enable resistor
+  P1OUT |= BIT3;			// pull up resistor
+  P1IE |= BIT3;				// interrupt enable
+  P1IES |= BIT3;			// interrupt sense on transition from 1 (unpressed->pressed)
+  P1IFG &= ~BIT3;			// no presently pending interrupt from switch
+
+  // stop CPU & enable interrupts
+  _BIS_SR(BIT4|BIT3);                   // bit 4 = CPUOFF, bit 3 = GIE (general interrupt enable)
+} 
+
+

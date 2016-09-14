@@ -1,0 +1,83 @@
+Mahdokht Afravi, 80483123
+CS 3432 Arch1, Lab2-1
+Last Modified: 03.31 R
+
+//submission requires illustrations of state machines implemented for
+steps 2 and 3.
+
+Part 1: Construct a Makefile that includes production to:
+     - (toggle_c) compile led_press.c to a loadable elf file; this
+       should be the default production
+     - (clean) remove all files created from compilation
+     - (load_c) load the elf file onto a launchpad board
+       >> For this assignment, I am using my previous lab's Makefile
+       	  (lab0-flash) as a guide for this lab's Makefile. This time,
+	  I only have 4 "variables" that will be commonly called, and
+	  these are:
+	  	- CPU = msp430g2553 which targets the device
+		- CFLAGS = -mmcu=${CPU} the microcontroller CPU on MSP
+		- CC = msp430-gcc which compiles using GCC for the MSP
+		- AS = msp430-as which compiles the assembly for MSP
+	  Furthermore, the name of the command to load the executable
+	  onto the MSP430 is "load_c", which is the command to build
+	  the "toggle_c.elf" executable. The helper led_press.o
+	  compiles the led_press.c into its object file.
+
+Part 2: Implement toggle function
+     - Define a simple i/o automata (IOA) that will toggle an LED
+       each time the button is pressed.
+     - Modify the led_press.c to implement this IOA.
+The IOA should be implemented in a method update_state() that
+     - reads input
+     - computes one state change (if necessary)
+     - updates output (if necessary)
+     - update_state() should be in a file called transition_c.c that
+       stores the currect state, updates the current state, and calls
+       appropriate functions on a state transition.
+update_state() should be called repeatedly by main() and neither loop
+internally nor be recursive.
+       >> For the state chart diagram, I have a start which is the
+       	  only final state of the automata. This is where neither of
+	  the lights are on, and the button is not pressed. The next
+	  state (the first state in the loop) begins when the button
+	  is pressed down, and the red light will turn on, but the
+	  green light is still off. While the button is down, the
+	  machine will stay in this state. Once the button is up,
+	  we transition to the 3rd state, or 2nd state of the loop,
+	  and this is where (while the button is up), the red light
+	  stays on, and the green light will remain off. If the
+	  button is pressed, then the machine transitions into a
+	  new state which (while the button is down), the red light
+	  will turn off and the green light will turn on. If the
+	  button is pressed again, then we return to the first state
+	  of the loop which was the first state of the loop, and the
+	  second state of the entire state diagram, where the red
+	  light is on and the green light is off.
+	  To make the header file, I made the call to transition_c.c
+	  and the method inside, which would be update_state().
+	  The program runs by calling the update_state() in the
+	  transition_c.c file, which is included in the led_press.c
+	  file. Running the program (using only two states instead of
+	  the four I declared in my state transition diagram), the
+	  test worked: pressing the button changes the LED to the
+	  other color. This loop will not end until you disconnect
+	  the MSP430.
+
+Part 3: Debounce the switch
+     - define a deterministic IOA that transitions only once every
+       10ms which both debounces the button and implements the toggle
+       function from Part 2.
+     - implement a new program "debounce" that implements this IOA
+       and modify the Makefile to compile (and load) both it and
+       led_press
+       >> 
+
+Part 4: Convert your update_state method to assembly
+     - create a new file called transition_s.s that contains the
+       assembly version of your update_state function
+     - transition_s.s should store the current state and call the
+       *********
+     - create a new make productions:
+       	   = (toggle_s) compile transition_s.s to a loadable elf file
+	   = (load_s) load the elf file onto a launchpad board
+       >> 

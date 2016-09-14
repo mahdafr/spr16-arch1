@@ -1,0 +1,24 @@
+Exercise 3-2: Write a function excape(s,t) that converts characters like newline and tab into visible escape sequences like \n and \t as it copies the string t to s. Use a switch. Write a function for the other direction as well, converting escape sequences into the real characters.
+	 >> I collaborated with Michael E and Joseph C in understanding the problem. To my understanding, the function will not have a return type (as it will copy from t to s, character by character). If the character at some index i is the newline (\n) or the tab (\t), we will copy it's sequences. The escapeR(...) function will read the string. When we find a '\', we will check what the next character is, then store into the appropriate index what the escape sequence was intended.
+	 I was able to fix my errors (segmentation fault (core dumped)) as recommended by Chris McKye. My code will convert (from input t) to s, then the esccapeR(...) will send back this new s (as t). This should result in the original input.
+	 As far as the output is concerned...I cannot seem to identify exactly what will be able to output the characters correctly (instead of \265 or some other number sequence.) This output still occurs even when utilizing putchar instead of printf.
+
+Exercise 3-4: In a two's complement number representation, our version of itoa does not handle the largest negative number, that is, the value of n equal to -(2^(wordsize-1)). Explain why not. Modify it to print that value correctly, regardless of the machine on which it runs.
+For this problem, there is no need to write a program. Just descrive why the problem occurs, how it can be addressed.
+void itoa(int n, char s[]) {
+     int i, sign; //record sign
+     if ( (sign=n)<0 )
+     	n = -n; //make n positive
+     i = 0;
+     do { //generate digits in reverse order
+     	s[i++] = n%10 + '0'; //get next digit
+     } while ( (n/=10)>0 ); //delete it
+     if ( sign<0 )
+     	s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+}
+	>> From what we know of the 'number wheel' which we learned in class about the range of negative to nonnegative numbers, (for 4-bit, -8 to 7), 7 is the maximum nonnegative number as 0 takes a spot in this wheel as a nonnegative number (where the leading bit is 0). To fix this code, we can add 1 to the negative number so that we will be able to handle the largest negative number. By adding this 1 before we grab each digit to the s array, and reversing it, the number will be converted to the character in s, displaying as its new representation. Similarly, this is not-ing the number (1's complement) and adding 1 (acquiring 2's complement).
+
+Exercise 3-X: Write a function int itob(int val, int base, char *str, int nChars) that converts integer val into a string in str in radix base with limited field width nChars. The result string should be no longer than nChars long. If the representation of val requires more than nChars, the string should be truncated. If the ASCII representation of val fits in nChars bytes, itob's return value should be the length of that string. Otherwise, it should return a negative value.
+	 >> The problem presented is to convert an integer to another base, and place this into a character array. My implementation will (much like the loop in exc3-4) use modulus to grab its value in the new base (therefore, val%base) so as to develop the character. Any radix base system has base-number of symbols (base 10 has 10 symbols (0-9), base 2 has 2 symbols (0,1), etc.), and so my code will take this into account when developing the str array (by utilizing switch - however, I only counted up to base 17). My test cases are hardcoded into exc3-X.c: itob(255,2,str,10) should return 8, itob(255,2,str,10) should return 8, itob(255,10,str,4) should return 3, itob(255,2,str,3) should return -1, itob(255,2,str,3) should return -1, itob(2801,16,str,4) should return 3. All of the expected outputs were actual results. My outputs for the strings will be filling the empty spaces with '_', as can be found when running the executable. I did work with Joseph C and Michael E on understanding the problem. In order to reverse the string, I used the reverse function from the text, which is found on page 62.

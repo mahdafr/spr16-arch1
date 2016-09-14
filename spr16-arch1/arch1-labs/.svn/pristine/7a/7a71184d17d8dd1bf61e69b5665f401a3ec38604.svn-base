@@ -1,0 +1,48 @@
+Mahdokht Afravi, 80483123
+CS 3432 Arch1, Lab2-1
+Last Modified: 03.28 U
+
+//submission requires illustrations of state machines implemented for
+steps 2 and 3.
+
+Part 1: Construct a Makefile that includes production to:
+     - (toggle_c) compile led_press.c to a loadable elf file; this
+       should be the default production
+     - (clean) remove all files created from compilation
+     - (load_c) load the elf file onto a launchpad board
+       >> For this assignment, I am using my previous lab's Makefile
+       	  (lab0-flash) as a guide for this lab's Makefile. 
+
+Part 2: Implement toggle function
+     - Define a simple i/o automata (IOA) that will toggle an LED
+       each time the button is pressed.
+     - Modify the led_press.c to implement this IOA.
+The IOA should be implemented in a method update_state() that
+     - reads input
+     - computes one state change (if necessary)
+     - updates output (if necessary)
+     - update_state() should be in a file called transition_c.c that
+       stores the currect state, updates the current state, and calls
+       appropriate functions on a state transition.
+update_state() should be called repeatedly by main() and neither loop
+internally nor be recursive.
+       >> 
+
+Part 3: Debounce the switch
+     - define a deterministic IOA that transitions only once every
+       10ms which both debounces the button and implements the toggle
+       function from Part 2.
+     - implement a new program "debounce" that implements this IOA
+       and modify the Makefile to compile (and load) both it and
+       led_press
+       >> 
+
+Part 4: Convert your update_state method to assembly
+     - create a new file called transition_s.s that contains the
+       assembly version of your update_state function
+     - transition_s.s should store the current state and call the
+       *********
+     - create a new make productions:
+       	   = (toggle_s) compile transition_s.s to a loadable elf file
+	   = (load_s) load the elf file onto a launchpad board
+       >> 

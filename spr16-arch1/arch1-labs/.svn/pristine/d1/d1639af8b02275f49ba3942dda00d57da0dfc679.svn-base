@@ -1,0 +1,9 @@
+all: ex2-1 ex2-3
+
+ex2-1: ex2-1.c
+	gcc -o ex2-1 ex2-1.c
+ex2-3: ex2-3.c
+	gcc -o ex2-3 ex2-3.c
+
+clean:
+	rm ex2-1 ex2-3

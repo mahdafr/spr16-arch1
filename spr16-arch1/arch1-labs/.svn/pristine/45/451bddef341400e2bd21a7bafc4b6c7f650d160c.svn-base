@@ -1,0 +1,20 @@
+Part 1: Modify sleep_600th.s to accurately delay 1/600th of a
+second. Your lab submission should include a file name readme.txt that
+clearly indicates how you
+     (1) computed the changes to this file
+     (2) tested that these changes function correctly
+     >> If there are needed to have (1/600)*(10^6) / 3 cycles/s = 555
+     	cycles delayed.
+
+Part 2: Create a new assembly language source file name led_s.s that
+implements a c-callable function led_control with the same semantics
+as the version defined in led_c.c. Your Makefile file for should have:
+   (1) a new led_s.o production that builds led_s.o from led_s.s
+   (2) a new blink_s.elf production builds a program name blind_s.elf
+       that is linked with led_s.o rather than led_c.o. Note that the
+       "main" method for both blink_c.elf and blink_s.elf is the same
+       and defined within blink.c.
+   (3) a new "install_s" production builds blink_s.elf (if necessary)
+       and then installs it on a launchpad
+   (4) the default (all) production compiles blink_s.elf and
+       blink_c.elf

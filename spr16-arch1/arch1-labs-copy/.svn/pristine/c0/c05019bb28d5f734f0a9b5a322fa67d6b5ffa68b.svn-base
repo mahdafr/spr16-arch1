@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void squeeze(char s1[], char s2[]);
+
+int main(void)
+{
+  char s1[] = "This is a string";
+  char s2[] = "isa";
+  
+  printf("String 1 %s\n", s1);
+  squeeze(s1, s2);
+  printf("String 1 %s\n", s1);
+
+}
+
+void squeeze(char s1[], char s2[])
+{
+  int t1, t2, t3;
+  t1 = 0; // set t1 to 0
+  while (s1[t1]) {
+    t2 = 0;
+
+    while (s2[t2]) {
+
+      // check if s1[t1] is same as s1[t2]
+
+      if (s1[t1] ==s2[t2])
+
+	{
+
+      t3 = t1;
+	  while (s1[t3]){
+	  s1[t3] = s1[t3 + 1];
+	  ++t3;
+	  }
+	} 
+      t2++;} // t2 = t2 + 1
+  t1++;
+  }
+  }
+	    
+    

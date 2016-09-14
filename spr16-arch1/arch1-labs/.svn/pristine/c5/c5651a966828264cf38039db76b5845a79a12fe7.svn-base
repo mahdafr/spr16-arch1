@@ -1,0 +1,32 @@
+Mahdokht Afravi, 80483123
+CS 3432: Arch1
+Lab2-2: Interrupts, State Machines, & Debouncing Last
+Modified: 04.06.2016
+
+Part a:
+  Step 1. Modify the a-buttonInterrupt to instead illuminate the
+  green led when the button is pressed (and not when it is released).
+  	>>
+
+  Step 2. Implement a new program that toggles the green LED and
+  illuminates the red LED when the button is pressed. The red LED
+  should be off and green LED should not change when the button is
+  released. Don't bother to debounce.
+  	>>
+
+Part b:
+  Modify the b-flash program to
+     - flash the red LED every 1s, and
+     - flash the green LED every 0.25s
+        >>
+	
+Part c:
+  Create a new program "c-combined" with the following behavior:
+     - the red LED is toggled every time the button is pressed, it
+       should not change when the button is released.
+     - the green LED flashes when the button is up. Its flash rate
+       is determined by the red LED's state. It should flash at a
+       rate of
+   	  = 4 MHz when the red LED is on, or
+	  = 1 Hz when the red LED is off
+	>>

@@ -1,0 +1,19 @@
+05/17 T - Team Flappy Readme
+Mahdokht Afravi (Pipes)
+I worked on the pipes for the flappy game project. In order to
+draw multiple pipes for the game, I took a more hard-coded
+approach in my implementation. I wrote a method (one influenced
+by the update cursor method) to establish at which columns of
+the LCD will the pipes be drawn. My implementation then called
+the pipeChunk method (influenced by the cursorChunk method) to
+draw the pipe in its design (with a 'lip' on the openings of
+the pipes). I then came to issues on how to move the pipes to
+the left, simulating the bird's flight through the LCD obstacle
+course of pipes. I then considered which of the regions the
+first pipe would be drawn in, and I considered a division of 3
+regions of the LCD screen. Depending on which boundaries which
+of the three pipes on the screen would be in, it would be a
+continuation of whatever the pipe was in the right boundaries.
+This would ensure the LCD would not look as if a new pipe is
+drawn in each of the boundaries I had created. Furthermore,
+I integrated the score to be written on the board with the

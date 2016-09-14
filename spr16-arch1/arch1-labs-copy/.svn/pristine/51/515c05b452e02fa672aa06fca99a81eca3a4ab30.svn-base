@@ -1,0 +1,10 @@
+all: names
+
+names.o: names.h names.c
+	gcc names.c -c -g -o names.o
+
+names: names.o
+	gcc names.o -o names
+
+clean:
+	rm -f names *.o

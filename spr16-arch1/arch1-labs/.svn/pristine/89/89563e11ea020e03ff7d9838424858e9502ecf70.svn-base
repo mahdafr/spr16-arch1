@@ -1,0 +1,128 @@
+//Exercise 3-2: Write a function excape(s,t) that converts characters like newline and tab into visible escape sequences like \n and \t as it copies the string t to s. Use a switch. Write a function for the other direction as well, converting escape sequences into the real characters.
+
+#include <stdio.h>
+
+void escapeF(char s[100],char t[100]) {
+  int j = 0;
+  for ( int i=0 ; t[i]!='\0' ; i++ ) {
+    //printf("%c",t[i]); //debugging
+    switch ( t[i] ) {
+    case '\n':
+      s[j] = '\\';
+      s[++j] = 'n';
+      break;
+    case '\t':
+      s[j] = '\\';
+      s[++j] = 't';
+      break;
+    case '\a':
+      s[j] = '\\';
+      s[++j] = 'a';
+      break;
+    case '\f':
+      s[j] = '\\';
+      s[++j] = 'f';
+      break;
+    case '\r':
+      s[j] = '\\';
+      s[++j] = 'r';
+      break;
+    case '\v':
+      s[j] = '\\';
+      s[++j] = 'v';
+      break;
+    case '\\':
+      s[j] = '\\';
+      j++;
+      break;
+    case '\?':
+      s[j] = '\\';
+      s[++j] = '\?';
+      break;
+    case '\'':
+      s[j] = '\\';
+      s[++j] = '\'';
+      break;
+    case '\"':
+      s[j] = '\\';
+      s[++j] = '\"';
+      break;
+    default:
+      s[j] = t[i];
+      j++;
+      break;
+    } //end switch
+    j++;
+  } //end for: traversing s
+  //outputting t
+  for ( int i=0 ; s[i]!='\0' ; i++ )
+    printf("%s",s[i]);
+}
+
+void escapeR(char s[100],char t[100]) {
+  int j = 0;
+  for ( int i=0 ; t[i]!='\0' ; i++ ) {
+    switch ( t[i] ) {
+    case '\\':
+      switch ( t[++i] ) {
+      case 'n':
+	s[j] = '\n';
+	break;
+      case 't':
+	s[j] = '\t';
+	break;
+      case '\\':
+	s[j] = '\\';
+	break;
+      case '\?':
+	s[j] = '\?';
+	break;
+      case '\'':
+	s[j] = '\'';
+	break;
+      case '\"':
+	s[j] = '\"';
+	break;
+      case 'v':
+	s[j] = '\v';
+	break;
+      case 'r':
+	s[j] = '\r';
+	break;
+      case 'f':
+	s[j] = '\f';
+	break;
+      case 'b':
+	s[j] = '\b';
+	break;
+      case 'a':
+	s[j] = '\a';
+	break;
+      } //end switch: what to insert
+    default:
+      s[j] = t[i];
+      break;
+    } //end switch
+    j++;
+  } //end for: traversing t
+  //outputting s
+  for ( int i=0 ; t[i]!='\0' ; i++ )
+    printf("%s",s[i]);
+}
+
+int main(void) {
+  char s[100];
+  char t[100];
+  char c; int i=0;
+  while ( (c=getchar())!=EOF ) {
+    t[i] = c;
+    i++;
+  }
+  printf("Escape forward, s=");
+  escapeF(s,t);
+  
+  //printf("\nEscape reverse, t=hap\\npy, s=");
+  //escapeR("","hap\\npy");
+
+  return 0;
+}

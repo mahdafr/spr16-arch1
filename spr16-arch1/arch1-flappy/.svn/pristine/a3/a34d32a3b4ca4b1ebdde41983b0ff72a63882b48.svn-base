@@ -1,0 +1,45 @@
+#include "lcd_utils.h"
+#include "drawPipe.h"
+
+static u_char oldPipeTopMajor, oldPipeBotMajor, oldPipeLeft, oldPipeRight;
+#define pipeRadius 4
+#define pipeHeight 2*pipeRadius*pipeRadius
+#define getYMajor lcd_getYMajor 
+#define getYMinor lcd_getYMinor
+
+void drawPipe(u_char pipeX, u_char deviator) {
+  /* pipe left & right rectangular window, includes old & new pipe */
+  u_char pipeTop = deviator - pipeHeight;
+  u_char pipeBot = deviator + pipeHeight;
+  u_char pipeTopMajor = getYMajor(pipeTop);
+  u_char pipeBotMajor = getYMajor(pipeBot);
+  u_char pipeLeft = pipeX - pipeRadius;
+  u_char pipeRight = pipeX + pipeRadius;
+  /* bounding rectangle surrounding old & new pipe */
+  u_char boundLeft = min(oldPipeLeft, pipeLeft);    /* left col */
+  u_char boundRight = max(oldPipeRight, pipeRight); /* right col */
+
+  u_char rowMajor = min(oldPipeTopMajor, pipeTopMajor);      /* top chunk number */
+  u_char rowMajorBound = max(oldPipeBotMajor, pipeBotMajor); /* bot chunk number */
+  u_char chunkTop = lcd_majorToY(rowMajor); /* top row of top chunk */
+  for ( ; rowMajor<=rowMajorBound ;	    /* for all affected chunk #s */
+       rowMajor++, chunkTop+=8 ) {	    /* next chunk */
+    lcd_setAddr(boundLeft, rowMajor);
+    u_char chunk = 0, col;
+    if ( rowMajor>=pipeTopMajor && rowMajor<=pipeBotMajor ) { 
+      u_char chunkBot = chunkTop + 7;
+      u_char bitsMin = getYMinor(max(chunkTop,pipeTop)); /* bits to set */
+      u_char bitsMax = getYMinor(min(chunkBot,pipeBot));
+      u_char numBitsToSet = 1 + (bitsMax - bitsMin);
+      chunk = set_range(numBitsToSet, bitsMin);
+    }
+    for ( col=boundLeft ; col<pipeLeft ; col++ ) /* left of pipe */
+      lcd_writeChunk(0);
+    for ( ; col<= pipeRight ; col++ ) /* pipe */
+      lcd_writeChunk(chunk);
+    for ( ; col<=boundRight ; col++ ) /* right of pipe */
+      lcd_writeChunk(0);
+  }
+  oldPipeTopMajor = pipeTopMajor; oldPipeBotMajor = pipeBotMajor;
+  oldPipeLeft = pipeLeft; oldPipeRight = pipeRight;
+}

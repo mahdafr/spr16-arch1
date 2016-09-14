@@ -1,0 +1,38 @@
+[student@localhost extras]$ XDG_VTNR=1
+XDG_SESSION_ID=1
+HOSTNAME=localhost.localdomain
+SHELL=/bin/bash
+TERM=dumb
+HISTSIZE=1000
+QT_GRAPHICSSYSTEM_CHECKED=1
+USER=student
+EMACS=t
+LS_COLORS=
+TERMCAP=
+COLUMNS=100
+MAIL=/var/spool/mail/student
+PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/student/.local/bin:/home/student/bin
+PWD=/home/student/arch1-labs/extras
+LANG=en_US.UTF-8
+MODULEPATH=/etc/scl/modulefiles:/etc/scl/modulefiles:/usr/share/Modules/modulefiles:/etc/modulefiles:/usr/share/modulefiles
+LOADEDMODULES=
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+HISTCONTROL=ignoredups
+SHLVL=2
+XDG_SEAT=seat0
+HOME=/home/student
+LOGNAME=student
+MODULESHOME=/usr/share/Modules
+LESSOPEN=|/usr/bin/lesspipe.sh %s
+XDG_RUNTIME_DIR=/run/user/1000
+INSIDE_EMACS=24.5.1,comint
+BASH_FUNC_module()=() {  eval `/usr/bin/modulecmd bash $*`
+}
+BASH_FUNC_scl()=() {  local CMD=$1;
+ if [ "$CMD" = "load" -o "$CMD" = "unload" ]; then
+ eval "module $@";
+ else
+ /usr/bin/scl "$@";
+ fi
+}
+_=/usr/bin/env

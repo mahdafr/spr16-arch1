@@ -1,0 +1,78 @@
+//Exercise 2-3: Write the function htoi(s), which converts a string of hexadecimal digits (including an optional 0x or 0X) into its equivalent integer value. The allowable digits are 0 through 9, a through f, and A through F.
+
+#include <stdio.h>
+#include <math.h>
+
+int htoi(char s[]);
+
+int main(void) {
+  double hToI = htoi("AF1");
+  return 0;
+}
+
+int htoi(char s[]) {
+  //in this method, we convert from hexadecimal to integer
+  //we begin by traversing to the end of the number (still in hex)
+  int i=0;
+  for ( char c=s[i] ; c!='\0' ; i++ ) {}  
+  //now that we went to the last index of the number (far right), we can convert to int
+  int theNumber, power=1;
+  int thePow = pow(16,0);
+  //starting with power=0, reading the last (i-th) index, we calculate it first
+  switch ( s[i] ) {
+    case 'A': case 'a':
+      theNumber += 10*thePow;
+      break;
+    case 'B': case 'b':
+      theNumber += 11*thePow;
+      break;
+    case 'C': case 'c':
+      theNumber += 12*thePow;
+      break;
+    case 'D': case 'd':
+      theNumber += 13*thePow;
+      break;
+    case 'E': case 'e':
+      theNumber += 14*thePow;
+      break;
+    case 'F': case 'f':
+      theNumber += 15*thePow;
+      break;
+    default:
+      int val = s[i];
+      theNumber += val*thePow;
+  } //end switch: what is the character at index 0
+  i--;
+  while ( i>-1 ) {
+    //we will start from the right, so that we will stop when i=0
+    int index = pow(16,power);
+    switch ( s[i] ) {
+      //what is the character we are reading?
+      case 'A': case 'a':
+	theNumber += 10*index;
+	break;
+      case 'B': case 'b':
+	theNumber += 11*index;
+	break;
+      case 'C': case 'c':
+	theNumber += 12*index;
+        break;
+      case 'D': case 'd':
+	theNumber += 13*index;
+        break;
+      case 'E': case 'e':
+	theNumber += 14*index;
+        break;
+      case 'F': case 'f':
+	theNumber += 15*index;
+        break;
+      case 'X': case 'x': break;
+      default:
+	int val = s[i];
+        theNumber += val*index;
+    } //end switch
+    i--; //moving left in s
+    power++; //moving left increases the power of 16
+  } //end while: traversing the hexadecimal number from right to left
+  return theNumber;
+}

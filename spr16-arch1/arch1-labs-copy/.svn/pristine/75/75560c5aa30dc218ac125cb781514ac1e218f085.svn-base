@@ -1,0 +1,88 @@
+//Exercise 3-X: Write a function int itob(int val, int base, char *str, int nChars) that converts integer val into a string in str in radix base with limited field width nChars. The result string should be no longer than nChars long. If the representation of val requires more than nChars, the string should be truncated. If the ASCII representation of val fits in nChars bytes, itob's return value should be the length of that string. Otherwise, it should return a negative value.
+
+#include <stdio.h>
+
+int itob(int val, int base, char *str, int nChars) {
+  //this method will convert val to str
+  int len = 0; //our length of the number/string
+  //grab the last number, adding it to str
+  do {
+    //if the base<11, we use only 0-9
+    if ( base<=10 ) str[len++] = val%base + '0';
+    else {
+      //base>10, so we must write single characters for 10 and up
+      int tmp = val%base;
+      switch ( tmp ) {
+      case 10:
+	//decimal 10 = (base) A
+	str[len++] = 'A';
+	break;
+      case 11:
+	//decimal 11 = (base) B
+	str[len++] = 'B';
+	break;
+      case 12:
+	//decimal 12 = (base) C
+	str[len++] = 'C';
+	break;
+      case 13:
+	//decimal 13 = (base) D
+	str[len++] = 'D';
+	break;
+      case 14:
+	//decimal 14 = (base) E
+	str[len++] = 'E';
+	break;
+      case 15:
+	//decimal 15 = (base) F
+	str[len++] = 'F';
+	break;
+      case 16:
+	//decimal 16 = (base) G
+	str[len++] = 'G';
+	break;
+      default:
+	//decimal (tmp<10) = (base) tmp
+	str[len++] = tmp + '0';
+	break;
+      } //end switch: considering up to base 17
+    } //if base we are converting to has more symbols than 0-9
+  } while ( (val/=base)>0 && len<=nChars );
+
+  //if len<nChars, fill the rest with 0s
+  int m = len;
+  while ( m<nChars ) str[m++] = '_';
+
+  //reversing the string sothat it will be output properly
+  //code fragment from page 62 of the text
+  int c, i, j;
+  for ( i=0,j=nChars-1 ; i<j ; i++,j-- ) {
+    c = str[i];
+    str[i] = str[j];
+    str[j] = c;
+  }
+
+  //outputting the str array
+  for ( i=0 ; i<nChars ; i++ )
+    putchar(str[i]);
+  printf("\n");
+  
+  //if we have enough bytes, return the length; else, -1
+  if ( len<nChars ) return len;
+  //if we need more characters, truncate(chop) str
+  return -1;
+}
+
+int main(void) {
+  //we will have a limited field width of nChars
+  char str[10];
+  //testing with 255,2,str,10 should return 8
+  printf("testing with 255,2,str,10 should return 8: %d\n",itob(255,2,str,10));
+  //testing with 255,10,str,4 should return 3
+  printf("testing with 255,10,str,4 should return 3: %d\n",itob(255,10,str,4));
+  //testing with 255,2,str,3 should return -1
+  printf("testing with 255,2,str,3 should return -1: %d\n",itob(255,2,str,3));
+  //testing with 2801,16,str,4 should return 3
+  printf("testing with 2801,16,str,4 should return 3: %d\n",itob(2801,16,str,4));
+  return 0;
+}
